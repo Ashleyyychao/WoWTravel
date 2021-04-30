@@ -1,0 +1,63 @@
+{% extends "index.html" %} {% block title %}會員登入{% endblock %} {% block style %}
+<style>
+    .form-layout {
+        margin: 12vh auto 6vh;
+        height: fit-content;
+        width: 70%;
+        background-color: rgb(241, 241, 241);
+        border: rgb(38, 62, 133) solid 3px;
+        border-radius: 20px;
+    }
+    
+    .welcome-text {
+        margin-top: 20px;
+        text-align: center;
+        color: rgb(38, 62, 133);
+    }
+    
+    .welcome-text p {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .input {
+        margin-top: 18px;
+        font-size: 22px;
+        border: #aaa solid 1px;
+        border-radius: 5px;
+    }
+    
+    .create {
+        margin: 20px 0px;
+        width: fit-content;
+        height: 50px;
+        border-radius: 5px;
+        line-height: 35px;
+    }
+</style>
+{% endblock %}
+{% block script %}
+<script></script>
+{% endblock %} {% block alert %}{% endblock %} {% block content %}
+<div class="container form-layout d-flex flex-column">
+    <div class="welcome-text d-flex flex-column">
+        <h1>WoW Travel</h1>
+        <p>專屬於您的旅遊網站</p>
+    </div>
+                                                                <!-- 測試用create，之後記得改回 verify -->
+    <form class="d-flex flex-column align-items-center" action="{{url_for('create')}}" method="POST">
+        <input class="input col-md-8 col-lg-4" type="email" name="email" placeholder="電子郵件">
+        <input class="input col-md-8 col-lg-4" type="password" name="password" placeholder="密碼">
+        <input class="input btn btn-primary col-md-8 col-lg-4" type="submit" name="submit" value="登入">
+        <a class="my-3 text-decoration-none" href="#">忘記密碼？</a>
+        <hr class="m-0 w-75" />
+        <button class="create btn btn-success text-white">建立新帳號</button>
+    </form>
+
+    <!-- 
+    <form class="create-account" action="{{url_for('create')}}" method="POST">
+
+    </form> 
+    -->
+</div>
+{% endblock %}

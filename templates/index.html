@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    
+    <link rel="stylesheet" href="{{url_for('static', filename='common.css')}}"/>
+    <link rel="Shortcut Icon" type="image/x-icon" href="../static/icon/wow_travel.ico">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <title>WoWTravel - {% block title %}{% endblock %}</title>
+
+    {% block style %}
+    <style>
+        .full-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.507);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .full-screen .text {
+            width: 90%;
+            height: fit-content;
+            background-color: rgb(255, 255, 255);
+            padding: 20px;
+            position: relative;
+        }
+        /* nav */
+        
+        .logo {
+            display: flex;
+            align-items: center
+        }
+        
+        
+        
+        .btn-outline-success {
+            color: #ecf1ed;
+            border-color: #f8faf9;
+        }
+        /* carousel */
+        
+        .carousel_text {
+            color: rgb(22, 22, 22);
+        }
+        
+        .carousel-caption {
+            margin-top: 150px;
+            position: absolute;
+            top: 0;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        /* aside */
+        
+        .circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: crimson;
+            margin-top: 10px;
+            margin-bottom: 0;
+            animation: logoactive 5s 2s infinite;
+        }
+        
+        @keyframes logoactive {
+            0% {
+                border-radius: 0%;
+            }
+            100% {
+                border-radius: 50%;
+            }
+        }
+        /* artical */
+        
+        #us span,
+        #au span,
+        #ch span {
+            display: none;
+        }
+        
+        .jp_item,
+        .jp_item_sm,
+        .au_item,
+        .au_item_sm,
+        .us_item,
+        .us_item_sm,
+        .ch_item {
+            position: relative;
+        }
+        
+        .jp_text,
+        .au_text,
+        .us_text,
+        .ch_text {
+            bottom: 0;
+            content: '';
+            left: 1em;
+            opacity: 0;
+            position: absolute;
+            right: 1em;
+            top: 0;
+            background: rgba(68, 68, 68, 0.6);
+            color: #ffffff;
+            opacity: 0;
+            text-align: center;
+        }
+        
+        .us_text_sm,
+        .jp_text_sm,
+        .au_text_sm {
+            bottom: 0;
+            content: '';
+            left: 0;
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: rgba(68, 68, 68, 0.6);
+            color: #ffffff;
+            opacity: 0;
+            text-align: center;
+        }
+        
+        .au_item:hover .au_text,
+        .au_item_sm:hover .au_text_sm,
+        .jp_item_sm:hover .jp_text_sm,
+        .jp_item:hover .jp_text,
+        .us_item_sm:hover .us_text_sm,
+        .us_item:hover .us_text,
+        .ch_item:hover .ch_text {
+            opacity: 1;
+        }
+        
+        .au_text h2,
+        .jp_text h2,
+        .us_text h2,
+        .ch_text h2 {
+            margin-top: 3.3em;
+        }
+        
+        .au_text a,
+        .au_text_sm a,
+        .jp_text_sm a,
+        .jp_text a,
+        .us_text_sm a,
+        .us_text a,
+        .ch_text a {
+            color: #ffffff;
+        }
+        /* section */
+        
+        .list a {
+            font-size: 1.2em;
+            text-decoration: none;
+            color: rgb(75, 75, 75);
+            font-weight: bold;
+        }
+        
+        .list_ex {
+            font-size: 1.2em;
+            text-decoration: none;
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+            background-color: rgb(38, 62, 133);
+            border-radius: 5px;
+            transition: all .7s 0s ease;
+        }
+        
+        .list a:hover {
+            color: rgb(245, 236, 107);
+        }
+        
+        .list_ex:hover {
+            color: rgb(38, 62, 133);
+            background-color: rgb(247, 239, 140);
+            text-decoration: none;
+        }
+        
+        .nav a {
+            font-weight: bolder;
+            font-size: larger;
+        }
+        
+        .title-card {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+        }
+        
+        #hot {
+            font-size: 1em;
+            margin: 5px 0px;
+        }
+        
+        .add-to-cart {
+            background-color: rgb(38, 62, 133);
+            color: white;
+            cursor: pointer;
+        }
+        
+        .add-to-cart:hover {
+            color: rgb(38, 62, 133);
+            background-color: rgb(247, 239, 140);
+        }
+        
+        .btn-left {
+            background-color: rgb(226, 226, 226);
+            transition: all 0.3s 0s ease
+        }
+    </style>
+    {% endblock %}
+    <!-- 共用JS -->
+    <script>
+        $(document).ready(function() {
+            // different Home Page
+            $(".search").click(function() {
+                var text = $(".search-text").val();
+
+                if (text == "WoW") {
+                    $(".logo-link").attr('href', "https://finallypeace.github.io/WebProject/page/different%20home%20page/lien/index.html");
+                    alert("已切換首頁！");
+                }
+                return false;
+            });
+
+            // GoTop
+            $("#goTop").click(function() {
+                $("html,body").animate({
+                    scrollTop: 0
+                }, 'slow');
+                return false;
+            });
+
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 830) {
+                    $('#goTop').fadeIn(500);
+                } else {
+                    $('#goTop').fadeOut(500);
+                }
+            });
+        });
+    </script>
+
+    {% block script %}
+    <script>
+        $(document).ready(function() {
+            // 加入行程
+            var sum = 0;
+            var money = 0;
+
+            // 計算行程總金額
+            $(".add-to-cart").click(function() {
+                money = parseInt($(this).val());
+                var thousands = "";
+                var text = "";
+                var idNameArr = "";
+                var idName = "";
+
+                if ($(this).text() === "加入行程") {
+                    $(this).text("✔ 已加入");
+                    sum += money;
+                    thousands = sum.toString();
+                    $(".result").text(thousands);
+
+                    idNameArr = $(this).parents(".text_item").find(".title-card").text().split('║');
+                    text = "<a id='" + idNameArr[0] + "' class='dropdown-item'>" + idNameArr[0] + " $" + money + "</a>";
+
+                    $(".money").before(text);
+                } else if ($(this).text() == "✔ 已加入") {
+                    $(this).text("加入行程");
+                    sum -= money;
+                    thousands = sum.toLocaleString();
+                    $(".result").text(thousands);
+
+                    idNameArr = $(this).parents(".text_item").find(".title-card").text().split('║');
+                    idName = "#" + idNameArr[0];
+                    $(idName).remove();
+                } else {
+                    $(".result").text("有內鬼，終止交易！");
+                }
+            });
+
+            //article
+
+            $("#us").click(function() {
+                $(".nav-link span").hide();
+                $(".us-show").show();
+            });
+            $("#ch").click(function() {
+                $(".nav-link span").hide();
+                $(".ch-show").show()
+            });
+            $("#au").click(function() {
+                $(".nav-link span").hide();
+                $(".au-show").show()
+            });
+            $("#jp").click(function() {
+                $(".nav-link span").hide();
+                $(".jp-show").show();
+            });
+
+        });
+    </script>
+    {% endblock %}
+</head>
+
+<body class="container-fluid m-0 p-0">
+    <a href="#" id="goTop">
+        <i class="fas fa-angle-double-up"></i>
+    </a>
+
+    <!-- nav -->
+    {% block alert %}
+    <div class="full-screen alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="text">
+            <div class="close"> <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button></div>
+            <h4 class='font-weight-bold' style="color: rgb(255, 0, 51);">防疫小提醒</h4>
+            <p class='p-2'>即日起八大場所全面強制要求戴口罩，包含<span>醫療照顧機構、大眾運輸、賣場市集、教育學習場所、展演場所、宗教場所、娛樂場所、大型活動</span>等，提醒民眾務必配合。
+            </p>
+            <p>《小提醒》</br><span class='p-2'>▲國人在離島台灣好行、交通船或巴士仍有未戴口罩之情形，如有不戴或屢勸不聽者最高可罰款一萬五仟元。 更多防疫即時資訊可參考<a
+                        href="https://www.cdc.gov.tw/">衛生福利部疾病管制署</a>網頁</span></p>
+        </div>
+    </div>
+    {% endblock %}
+    <nav class="wow-nav navbar navbar-expand-lg navbar-dark fixed-top">
+        <a class="logo-link navbar-brand d-flex justify-content-center" href="{{url_for('index')}}">W<div class="logo">
+            <div class='nav_circle'></div>
+        </div>WTravel</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class=" collapse navbar-collapse " id="navbarSupportedContent">
+            <form class="form-inline my-2 my-lg-0">
+                <input class="search-text form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search">
+                <button class="search btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav mr-auto navbar-nav-scroll">
+                <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        繁體中文(CN)
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">ไทย</a>
+                        <a class="dropdown-item" href="#">English</a>
+                        <a class="dropdown-item" href="#">日本語</a>
+                        <a class="dropdown-item" href="#">한국어</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto navbar-nav-scroll">
+                <li class="nav-item dropdown">
+                    <a class="myCart nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">
+                        我的行程
+                    </a>
+                    <div class="myCartList dropdown-menu " aria-labelledby="navbarDropdown">
+
+                        <a class="money dropdown-item">
+                            <span class="text-muted">TWD&nbsp;</span>
+                            <span class="result">0</span>
+                        </a>
+                        <a class="dropdown-item text-right" href="{{url_for('jp_list')}}">去結帳</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        主選單
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">最新消息</a>
+                        <a class="dropdown-item" href="#">國內自由行</a>
+                        <a class="dropdown-item" href="#">國外自由行</a>
+                        <a class="dropdown-item" href="#">常見問題</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        台幣
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">£英鎊</a>
+                        <a class="dropdown-item" href="#">$美元</a>
+                        <a class="dropdown-item" href="#">₩韓元</a>
+                        <a class="dropdown-item" href="#">¥日幣</a>
+                    </div>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{url_for('log_in')}}">登入/註冊 <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- carousel -->
+    {% block content %}
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../static/image/index/world_eu.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h1>WoWTravel給你最棒的旅遊體驗</h1>
+                    <h4>WoWTravel gives you the best travel experience.</h4>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="../static/image/index/bg_beach.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block ">
+                    <h1 class='carousel_text mt-5'>全世界最棒的旅遊體驗</br>
+                        帶你深入探索有趣又獨特的旅遊體驗行程</h1>
+                    <h4 class='carousel_text'>WoWTravel gives you the best travel experience.</h4>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="../static/image/index/bd_london.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h2>全世界最棒的旅遊體驗</br>
+                        帶你深入探索有趣又獨特的旅遊體驗行程</h2>
+                    <h4>WoWTravel gives you the best travel experience.</h4>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    <!-- aside -->
+
+    <aside class="container">
+        <div class="row my-5">
+            <h1 class="col-12  d-flex justify-content-center">為何選擇W
+                <div class="logo">
+                    <div class='circle'></div>
+                </div>WTravel?
+
+            </h1>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-6 col-md-3  my-5 pb-5">
+                <img src="../static/icon/index/teamwork.png" class="rounded mx-auto d-block w-50" alt="...">
+                <div class="text h4 my-3 text-center font-weight-bold">最專業服務團隊</div>
+                <div class="aside_text p my-2 text-center font-weight-bold">從1950年起在各地已經深耕超過20年之久，累積超過3萬人次以上各地旅遊實績。
+                </div>
+            </div>
+            <div class="col-6 col-md-3 my-5">
+                <img src="../static/icon/index/salary.png" class="rounded mx-auto d-block w-50" alt="...">
+                <div class="text h4 my-3 text-center font-weight-bold">一手代理最省錢</div>
+                <div class="aside_text p my-2 text-center font-weight-bold">台灣旅遊團銷售冠軍，一手代理無中間商賺取差價，並幫您搭配最實惠機票與行程。</div>
+            </div>
+            <div class="col-6 col-md-3 my-5">
+                <img src="../static/icon/index/gift-box (2).png" class="rounded mx-auto d-block w-50" alt="...">
+                <div class="text h4 my-3 text-center font-weight-bold">最多優惠與贈禮</div>
+                <div class="aside_text p my-2 text-center font-weight-bold">最多獨家熱門推薦渡假村優惠與贈禮回饋給客戶，眾多明星、網紅的選擇~品質有保證!
+                </div>
+            </div>
+            <div class="col-6 col-md-3  my-5">
+                <img src="../static/icon/index/customer-service.png" class="rounded mx-auto d-block w-50" alt="...">
+                <div class="text h4 my-3 text-center font-weight-bold">客製化旅遊計畫</div>
+                <div class="aside_text p my-2 text-center font-weight-bold">公司企業、家族、親子旅遊皆可量身訂製，為您打造心中理想的旅程，皆由專人服務</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- article -->
+
+    <article class="container my-4 pb-5">
+        <div class="row justify-content-center my-3 ">
+            <div class="text h1">吃喝玩樂🍖自由配</div>
+        </div>
+
+        <div class="nav nav-tabs d-flex justify-content-center " id="navTab" role="tablist">
+            <a class="nav-link active" data-toggle='tab' id='jp' aria-current="page" href="#jpTab">日本<span
+                    class='jp-show'>-にっぽん意猶未盡的旅程</span></a>
+            <a class="nav-link " data-toggle='tab' id='us' href="#usTab">美國<span
+                    class='us-show'>-精彩freestyle🏈</span></a>
+            <a class="nav-link" data-toggle='tab' id='au' href="#auTab">澳大利亞<span class='au-show'>-🐨探訪奇珍異獸</span></a>
+            <a class="nav-link" data-toggle='tab' id='ch' href="#chTab">中國<span class='ch-show'>-曠古悠久的秘史探索📷</span></a>
+        </div>
+        <div class="tab-content mb-5" id="myTabContent">
+            <div class="tab-pane fade show active" id="jpTab" role="tabpanel" aria-labelledby="jp-tab">
+                <div class="row ">
+                    <div class="jp_item col-12 col-md-8 mt-3">
+                        <img src="../static/image/index/torii.jpg" class='jp_img' style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="jp_text">
+                            <h2>日本特輯</h2>
+                            <a href="{{ url_for('jp') }}">
+                                <p>#必逛景點</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class=" d-none d-md-block col-md-4 mt-3 ">
+                        <div class="row jp_item_sm "><img src="../static/image/index/japanfood.jpg" style="width: 100%;height: 200px;border-radius: 5PX;">
+                            <div class="jp_text_sm">
+                                <h2 class='mt-5'>日本特輯</h2>
+                                <a href="jp#local_snacks">
+                                    <p>#日本必吃</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mt-3 jp_item_sm"><img src="../static/image/index/micky.jpg" style="width: 100%;height: 195px;border-radius: 5PX;">
+                            <div class="jp_text_sm">
+                                <h2 class='mt-5'>日本特輯</h2>
+                                <a href="jp#theme_park">
+                                    <p>#經典樂園</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="tab-pane fade" id="usTab" role="tabpanel" aria-labelledby="us-tab">
+                <div class="row ">
+                    <div class="col-12 col-md-4 mt-3 us_item">
+                        <img src="../static/image/index/queen-of-liberty.jpg" style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="us_text">
+                            <h2>美國特輯</h2>
+                            <a href='#'>
+                                <p>#紐約必窺</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4  d-none d-md-block mt-3">
+                        <div class="row us_item_sm"><img src="../static/image/index/hollywood.jpg" style="width: 100%;height: 200px;border-radius: 5PX;">
+                            <div class="us_text_sm">
+                                <h2 class='mt-5'>美國特輯</h2>
+                                <a href='#'>
+                                    <p>#賭神同行</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mt-3 us_item_sm"><img src="../static/image/index/las-vegas.jpg" style="width: 100%;height: 195px;border-radius: 5PX;">
+                            <div class="us_text_sm">
+                                <h2 class='mt-5'>美國特輯</h2>
+                                <a href='#'>
+                                    <p>#星光大道</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-none d-md-block col-md-4 mt-3 us_item">
+                        <img src="../static/image/index/san-francisco.jpg" style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="us_text">
+                            <h2>美國特輯</h2>
+                            <a href='#'>
+                                <p>#灣邊之城</p>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="tab-pane fade" id="auTab" role="tabpanel" aria-labelledby="au-tab">
+                <div class="row ">
+                    <div class="col-4 d-none d-md-block mt-3">
+                        <div class="row au_item_sm"><img src="../static/image/index/koala-australia.jpg" style="width: 100%;height: 200px;border-radius: 5PX;">
+                            <div class="au_text_sm">
+                                <h2 class='mt-5'>澳洲特輯</h2>
+                                <a href='#'>
+                                    <p>#特產動物</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mt-3 au_item_sm"><img src="../static/image/index/Uluru.jpg" style="width: 100%;height: 195px;border-radius: 5PX;">
+                            <div class="au_text_sm">
+                                <h2 class='mt-5'>澳洲特輯</h2>
+                                <a href='#'>
+                                    <p>#電影採點</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-8 mt-3 au_item">
+                        <img src="../static/image/index/australia.jpg" style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="au_text">
+                            <h2>澳洲特輯</h2>
+                            <a href='#'>
+                                <p>#必逛景點</p>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="tab-pane fade" id="chTab" role="tabpanel" aria-labelledby="ch-tab">
+                <div class="row ">
+                    <div class="col-md-4 d-none d-md-block mt-3 ch_item">
+                        <img src="../static/image/index/Beijing.jpg" style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="ch_text">
+                            <h2>中國特輯</h2>
+                            <a href='#'>
+                                <p>#世界遺產</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3 d-none d-md-block  ch_item">
+                        <img src="../static/image/index/Xinjiang.jpg" style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="ch_text">
+                            <h2>中國特輯</h2>
+                            <a href='#'>
+                                <p>#蒙古風情</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 mt-3 ch_item ">
+                        <img src="../static/image/index/shanghai.jpg" style="width: 100%;height: 413px;border-radius: 5PX;">
+                        <div class="ch_text">
+                            <h2>中國特輯</h2>
+                            <a href='#'>
+                                <p>#上海風情</p>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- section -->
+
+    <section class="container">
+
+        <div class="row justify-content-center my-2 ">
+            <div class="text h1">FUN玩台灣🎢</div>
+        </div>
+        <div class="row d-flex justify-content-center mt-4">
+            <h6>城市精選</h6>
+        </div>
+        <div class='row d-flex justify-content-center my-4'>
+            <div class="list mx-2 p-2"><a href="">北台灣</a></div>
+            <div class="list mx-2 p-2"><a href="">南台灣</a></div>
+            <div class="list mx-2 p-2"><a href="">中台灣</a></div>
+            <div class="list mx-2 p-2"><a href="">東台灣</a></div>
+            <a class="list_ex mx-3 p-2" href="">離島地區</a>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12 col-md-3 my-3">
+                <div class="card card-block">
+                    <img src="../static/image/index/Cingjing-1.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>南投║清境農場~合歡山超值二日遊 (10:00 天天出發)</h4>
+                        <p id='hot'>🔥156K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD1299</del> <span style='font-size: 0.1em;'>TWD</span>899</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value=899>加入行程</button>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card card-block">
+                    <img src="../static/image/index/Taitung.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>台東║花現台東藍～太麻里青山農場.池上伯朗大道.日式鹿野神社.娜路彎銀河行館2日</h4>
+                        <p id='hot'>🔥456K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px ;'>TWD1999</del> <span style='font-size: 0.1em;'>TWD</span>1599</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='1599'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card card-block">
+                    <img src="../static/image/index/chiayi.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>嘉義║花現美好～阿勃勒黃金雨.隙頂雲海茶霧道.糖廠森林之歌.智選假日酒店2日</h4>
+                        <p id='hot'>🔥28K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px ;'>TWD2599</del> <span style='font-size: 0.1em;'>TWD</span>1699</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='1699'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card card-block">
+                    <img src="../static/image/index/tainan.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>台南║花現美好～虎頭埤風景區.阿勃勒金色步道.關廟鳳梨體驗.大目降文化園區1日</h4>
+                        <p id='hot'>🔥336k+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD1200</del> <span style='font-size: 0.1em;'>TWD</span>999</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='999'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <section class="container ">
+        <div class="row justify-content-center my-3 ">
+            <div class="text h1">樂遊全世界✈️</div>
+        </div>
+        <div class="row d-flex justify-content-center mt-4">
+            <h6>預約下一趟旅程</h6>
+        </div>
+        <div class='row d-flex justify-content-center my-4'>
+            <a class="list_ex mx-3 p-2" href="">歐洲</a>
+            <div class="list mx-2 p-2"><a href="">亞洲</a></div>
+            <div class="list mx-2 p-2"><a href="">美洲</a></div>
+            <div class="list mx-2 p-2"><a href="">非洲</a></div>
+            <div class="list mx-2 p-2"><a href="">大洋洲</a></div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-3 my-3">
+                <div class="card">
+                    <img src="../static/image/index/new-zealand-1450672_1280.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>紐西蘭║北島、南島五大必去~欣賞紐西蘭渾然天成的美景</h4>
+                        <p id='hot'>🔥136K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD39800</del> <span style='font-size: 0.1em;'>TWD</span>32000</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='32000'>加入行程</button>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card ">
+                    <img src="../static/image/index/Busan.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>釜山║西面、海雲台、甘川洞文化村~一次玩透！四天三夜行程規劃</h4>
+                        <p id='hot'>🔥75K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD22800</del> <span style='font-size: 0.1em;'>TWD</span>18900</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/Korea/list/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='18900'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card">
+                    <img src="../static/image/index/Chiang Mai.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>清邁║古城區、清萊~通通玩遍，五天四夜行程規劃</h4>
+                        <p id='hot'>🔥49K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD28999</del> <span style='font-size: 0.1em;'>TWD</span>22999</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='22999'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card">
+                    <img src="../static/image/index/Sabah.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>沙巴║跳島、紅樹林~通通玩遍，五天四夜行程規劃</h4>
+                        <p id='hot'>🔥25K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD29800</del> <span style='font-size: 0.1em;'>TWD</span>24600</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-3">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='24600'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container ">
+        <div class="row  justify-content-center my-2 ">
+            <div class="text-center h1">春暖花開🌸把握出遊好時節</div>
+        </div>
+        <div class="row d-flex justify-content-center mt-4">
+            <h6>當季最夯熱銷，即刻預約美好假期！</h6>
+        </div>
+        <div class='row d-flex justify-content-center my-4'>
+            <div class="list mx-2 p-2"><a href="">森呼吸．山林之旅</a></div>
+            <div class="list mx-2 p-2"><a href="">早鳥澎湖花火節</a></div>
+            <div class="list mx-2 p-2"><a href="">周末出發輕旅行</a></div>
+            <a class="list_ex mx-3 p-2" href="">百花齊放</a>
+
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-3 my-3">
+                <div class="card">
+                    <img src="../static/image/index/A-li-shan.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>嘉義║阿里山櫻紛飛～森林遊樂園區.沼平鐵道櫻花1日 </h4>
+                        <p id='hot'>🔥645K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD1299</del> <span style='font-size: 0.1em;'>TWD</span>999</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-2">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='999'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card">
+                    <img src="../static/image/index/Kaohsiung.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>高雄║花飛蝶舞～懷舊竹田車站.花旗木粉紅花林.六堆客家園區.美麗島光之穹頂2日 </h4>
+                        <p id='hot'>🔥75K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px ;'>TWD1590</del> <span style='font-size: 0.1em;'>TWD</span>1130</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-2">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='1130'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card ">
+                    <img src="../static/image/index/Miaoli.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card'>苗栗║紫愛苗栗薰衣草～葛瑞絲香草田.南庄老街桂花巷.日新島水榭樓台1日</h4>
+                        <p id='hot'>🔥125K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD999</del> <span style='font-size: 0.1em;'>TWD</span>750</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-2">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='750'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 my-3">
+                <div class="card">
+                    <img src="../static/image/index/Dianthus.jpg" style="width: 100%;height: 180px;">
+                    <div class='text_item p-1'>
+                        <h4 class='title-card '>彰化║花間旅行～康乃馨花田.鹿港天后宮.田中蜜麻花.小鎮老街漫遊1日</h4>
+                        <p id='hot'>🔥315K+已訂購</p>
+                        <p class='text-right' style='font-size: 1.5em;'> <del style='font-size: 0.1em;padding: 0px 5px;'>TWD1288</del> <span style='font-size: 0.1em;'>TWD</span>899</p>
+                        <p class="card-text d-flex justify-content-around align-items-end mb-2">
+                            <a href="./page/tw/index.html" class="btn btn-left col-5 text-decoration-none font-weight-bold ">詳細行程</a>
+                            <button class="add-to-cart btn btn-right col-5 text-decoration-none font-weight-bold" value='32000'>加入行程</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+    <!-- footer -->
+
+    <footer>
+        <div class="d-none d-md-flex flex-column align-items-center">
+            <div class="info_left my-3 py-2">
+                <p>即刻訂閱WoW Travel！</p>
+                <p>搶先獲得用戶限定優惠及最新熱門景點旅遊資訊！</p>
+                <p>訂閱即代表你同意我們的使用者條款和隱私權保護政策</p>
+            </div>
+            <div class="mail ">
+                <span class="mail_icon"></span>
+                <input type="search" id="search" placeholder="請輸入您的Email!" />
+                <button type="button">訂閱</button>
+            </div>
+        </div>
+        <div class="line m-0 p-4 w-100 d-none d-md-flex justify-content-center">
+            <hr class="m-0 w-75" size="2" noshade="noshade" />
+        </div>
+        <div class="d-md-none d-sm-block footer_h3 col-md-12 col-12 my-4 pt-5">
+            <h3>追蹤我們</h3>
+            <div class='d-flex justify-content-center my-2'>
+                <a href="#"> <i class="fab fa-line p-2" style="font-size: 2em; color: rgb(255, 255, 255)"></i></a>
+                <a href="#"> <i class="fab fa-facebook p-2" style="font-size: 2em; color: rgb(255, 255, 255)"></i></a>
+                <a href="#"><i class="fab fa-twitter p-2" style="font-size: 2em; color: rgb(240, 231, 230)"></i></a>
+                <a href="#"><i class="fab fa-youtube p-2" style="font-size: 2em; color: rgb(240, 231, 230)"></i></a>
+                <a href="#"><i class="fab fa-instagram p-2" style="font-size: 2em; color: rgb(240, 231, 230)"></i></a>
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="row footer_row ">
+
+                <div class="col-md-3 col-12 my-4">
+                    <ul class="footer_link ">
+                        <h3>給旅人</h3>
+                        <li><a href="">三大保證</a></li>
+                        <li><a href="">合作夥伴</a></li>
+                        <li><a href="">官方部落格</a></li>
+                        <li><a href="">會員好禮</a></li>
+                        <li><a href="">兌換贈品</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-12 my-4">
+                    <ul class="footer_link text-center">
+                        <h3>認識WoWTravel</h3>
+                        <li><a href="">關於WOWTrave</a></li>
+                        <li><a href="">使用者條款</a></li>
+                        <li><a href="">隱私權保護政策</a></li>
+                        <li><a href="">常見問題與幫助</a></li>
+                        <li><a href="">媒體報導</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 col-12 my-4">
+                    <ul class="footer_link">
+                        <h3>合作夥伴</h3>
+                        <li><a href="">聯盟行銷</a></li>
+                        <li><a href="">成為供應商</a></li>
+                        <li><a href="">供應商登入</a></li>
+                        <li><a href="">同業合作</a></li>
+                        <li><a href="">人才招募</a></li>
+                    </ul>
+                </div>
+                <div class="footer_bottom col-md-12 col-12 my-4">
+                    &copy;copyright 2021 by wow3cteam
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

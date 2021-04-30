@@ -1,0 +1,91 @@
+/* Read Me 
+共用CSS檔
+
+使用方式：
+在<head>中上方添加<link rel="stylesheet" href="路徑位置">
+
+使用須知：
+1.如果在自己網頁中加入相同class名稱的css，將會優先採用自己網頁中的css
+2.若要改寫此檔內容須經過小組討論哦！
+*/
+
+
+/* Nav */
+
+.nav-item {
+    font-size: 1.2em;
+}
+
+.nav_circle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: crimson;
+    margin-top: 8px;
+    animation: logo active 3s;
+}
+
+.btn-outline-success {
+    color: #ecf1ed;
+    border-color: #f8faf9;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255);
+}
+
+.dropdown-item:hover {
+    color: rgb(38, 62, 133);
+}
+
+
+/* Footer */
+
+footer {
+    background-color: rgb(27, 27, 27);
+}
+
+.footer_h3,
+.footer_row h3,
+.footer_bottom,
+.info_left p {
+    color: white;
+    text-align: center;
+}
+
+.footer_link {
+    padding-left: 0px;
+}
+
+.footer_link li {
+    list-style: none;
+    text-align: center;
+}
+
+.footer_link a {
+    text-decoration: none;
+    color: white
+}
+
+
+/* goTop */
+
+#goTop {
+    display: none;
+    position: fixed;
+    z-index: 2;
+    right: 30px;
+    bottom: 30px;
+    width: 50px;
+    height: 50px;
+    color: white;
+    background: rgb(84, 110, 187, .6);
+    line-height: 50px;
+    border-radius: 50%;
+    transition: all 0.7s;
+    text-align: center;
+}
+
+#goTop:hover {
+    background: rgb(84, 110, 187);
+}

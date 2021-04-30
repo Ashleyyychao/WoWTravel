@@ -1,0 +1,615 @@
+{% extends "index.html" %} {% block title %}國外旅遊{% endblock %} {% block style %}
+<style>
+    /* html {
+            scroll-behavior: smooth;
+        } */
+    
+    header {
+        position: relative;
+        background: rgba(0, 0, 0, .1) url("../static/image/jp/bg_jp.jpg") center;
+        background-blend-mode: multiply;
+        background-size: cover;
+        height: 30vh;
+        font-size: 5rem;
+        font-weight: bolder;
+        margin-top: 6vh;
+    }
+    /* .hashtag {
+            position: sticky; 
+            top: 56px;
+            z-index: 2;
+        } */
+    
+    main {
+        min-height: 60vh;
+    }
+    
+    section {
+        min-height: fit-content;
+    }
+    
+    .card {
+        border: 1px solid pink;
+    }
+    
+    .card-title {
+        font-weight: bolder;
+    }
+    
+    .card-text {
+        height: 60px;
+    }
+    
+    .btn-link {
+        background-color: #db4961;
+        color: #ffffff;
+        transition: all .7s 0s ease;
+    }
+    
+    .btn-link:hover {
+        background-color: #ffb8c6;
+        color: #db4961;
+        font-weight: bolder;
+    }
+    
+    .btn-primary {
+        background-color: rgb(38, 62, 133);
+        transition: all .8s 0s ease;
+    }
+    
+    .btn-primary:hover {
+        padding: 10px 30px;
+        font-size: larger;
+    }
+    
+    .fade {
+        opacity: 1;
+    }
+</style>
+{% endblock %} {% block script %}
+<script>
+    // 收藏鈕
+    var flag = 0;
+
+    function Favorites() {
+        if (flag % 2 == 0) {
+            document.getElementById("favorites").innerHTML = "已收藏";
+            document.getElementById("favorites").style.backgroundColor = "pink";
+        } else {
+            document.getElementById("favorites").innerHTML = "♡ 收藏";
+            document.getElementById("favorites").style.backgroundColor = "#dc3545";
+        }
+        flag++;
+    }
+
+    $(document).ready(function() {
+        // 計算行程總金額
+        var sum = 0;
+        var money = 0;
+
+        $(".add-to-cart").click(function() {
+            money = parseInt($(this).val());
+            var thousands = "";
+            var text = "";
+            var idNameArr = "";
+            var idName = "";
+
+            if ($(this).text() == "加入行程") {
+                $(this).text("✔ 已加入");
+                sum += money;
+                thousands = sum.toLocaleString();
+                $(".result").text(thousands);
+
+                idNameArr = $(this).parents(".card-body").find(".card-title").text().split(' ');
+                text = "<a id='" + idNameArr[idNameArr.length - 1] + "' class='dropdown-item'>" + $(this).parents(".card-body").find(".card-title").text() + " $" + money + "</a>";
+                $(".money").before(text);
+            } else if ($(this).text() == "✔ 已加入") {
+                $(this).text("加入行程");
+                sum -= money;
+                thousands = sum.toLocaleString();
+                $(".result").text(thousands);
+
+                idNameArr = $(this).parents(".card-body").find(".card-title").text().split(' ');
+                idName = "#" + idNameArr[idNameArr.length - 1];
+                $(idName).remove();
+            } else {
+                $(".result").text("有內鬼，終止交易！");
+            }
+        });
+
+        // 防止myCart 關閉
+        // $(".myCart").click(function() {
+        //     $('.myCartList').stopPropagation();
+        // });
+
+        // hashtag
+        $(".tag").click(function() {
+            var idName = $(this).attr("href");
+            $("html,body").animate({
+                scrollTop: $(idName).offset().top
+            }, 'slow');
+            return false;
+        });
+
+        // GoTop
+        // $("#goTop").click(function() {
+        //     $("html,body").animate({
+        //         scrollTop: 0
+        //     }, 'slow');
+        //     return false;
+        // });
+
+        // $(window).scroll(function() {
+        //     if ($(this).scrollTop() > 800) {
+        //         $('#goTop').fadeIn(500);
+        //     } else {
+        //         $('#goTop').fadeOut(500);
+        //     }
+        // });
+    });
+
+    //FadeIn & FadeOut
+    $(window).on("load", function() {
+        $(window).scroll(function() {
+            var windowBottom = $(this).scrollTop() + $(this).innerHeight();
+            $(".fade").each(function() {
+                var objectBottom = $(this).offset().top + $(this).outerHeight();
+
+                if (objectBottom < windowBottom) {
+                    if ($(this).css("opacity") == 0) {
+                        $(this).fadeTo(500, 1);
+                    }
+                } else {
+                    if ($(this).css("opacity") == 1) {
+                        $(this).fadeTo(500, 0);
+                    }
+                }
+            });
+        }).scroll(); //invoke scroll-handler on page-load
+    });
+</script>
+{% endblock %} {% block alert %}{% endblock %} {% block content %}
+<header class="d-flex justify-content-start">
+    <div class="country pl-2 text-white">日本</div>
+</header>
+
+<main class="mb-5 d-flex flex-column font-weight-bolder">
+
+    <div class="container d-flex flex-column">
+        <div style="color: gray;">
+            <a class="text-decoration-none" style="font-size: smaller; color: gray;" href="{{url_for('index')}}">WoW Travel</a> >
+            <a class="text-decoration-none" style="font-size: smaller; color: gray;" href="{{url_for('jp')}}">日本自由行</a>
+        </div>
+
+        <div class="mt-2 d-flex align-items-center">
+            <h3 class="m-2 font-weight-bolder">日本自由行景點行程</h3>
+            <div id="favorites" class="btn my-2 btn-danger" onclick="Favorites()">♡ 收藏</div>
+        </div>
+        <div class="hashtag p-2 d-flex flex-row flex-wrap">
+            <a class="tag m-2 p-2 table-bordered " href="#attraction">#必訪景點</a>
+            <a class="tag m-2 p-2 table-bordered " href="#local_snacks">#在地美食小吃</a>
+            <a class="tag m-2 p-2 table-bordered " href="#shopping">#購物</a>
+            <a class="tag m-2 p-2 table-bordered" href="#theme_park">#主題樂園門票</a>
+            <a class="tag m-2 p-2 table-bordered" href="#transportation">#交通票券</a>
+            <a class="tag m-2 p-2 table-bordered" href="#amounts">#旅費試算</a>
+        </div>
+        <div class="row m-2 p-2 ">
+            <div class="col-6 col-md-5 col-lg-3">語言: 日語、中文、英語</div>
+            <div class="col-6 col-md-5 col-lg-3">電壓: 100 伏特 / 50 赫茲</div>
+        </div>
+        <div class="p-2 w-100 d-flex justify-content-center">
+            <hr class="m-0 w-100" size="2" />
+        </div>
+        <p class="m-2 p-2">&emsp;&emsp;東京、大阪、北海道是台灣人日本自由行最熱門的 3 大城市。 說到出國，為數眾多的台灣人都會將日本旅遊列為首選，根據觀光局統計 2016 年台灣到日本的人次高達 400 多萬，將近三成，顯示台灣人對於到日本旅遊的喜愛程度。 隨著網路日益發達到日本自由行一點兒也不難，只要打打鍵盤一拖拉庫的日本景點看也看不完，這麼多的資訊，這裡都幫你整理好了， 將日本旅遊城市分區做精華景點介紹，點進各城市會有更詳細的日本自由行景點懶人包攻略噢！ 還有精選各景點美食、樂園門票、交通、住宿，還不快立馬規劃自己的日本自由行！
+        </p>
+    </div>
+</main>
+
+<a href="#" id="goTop">
+    <i class="fas fa-angle-double-up"></i>
+</a>
+
+<section id="attraction" class="container my-4 d-flex flex-column">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 300px; background: rgba(0, 0, 0, .5) url('../static/image/jp/必訪景點.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">必訪景點</h3>
+            <p class="fade card-text">前進日本體驗在地文化活動，參訪當地歷史古蹟、節慶表演、穿著和服，體驗當地居民的生活模式。</p>
+        </div>
+    </div>
+    <div class="row d-flex flex-row flex-wrap">
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/必訪景點_東京_淺草雷門.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【東京】 淺草雷門</h5>
+                    <p class="card-text">
+                        淺草在江戶時代曾是東京最繁榮的一條街，保留了東京為數不多的江戶下町氛圍，這裡可說是最熱門的東京旅遊景點！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>10,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="10000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/必訪景點_東京_晴空塔.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【東京】 晴空塔</h5>
+                    <p class="card-text">
+                        晴空塔可說是東京頭號地標，是現今世界第二高塔！俯瞰整個東京市區的景觀，絕對是遊客來東京必去景點之一。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>10,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="10000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/必訪景點_東京_河口湖.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【東京】 河口湖</h5>
+                    <p class="card-text">河口湖是位於山梨縣富士河口湖町的湖泊，為富士五湖之一，天氣晴朗時湖中富士山倒影相映為一絕景。</p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>10,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="10000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/必訪景點_大阪_道頓堀.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【大阪】 道頓堀</h5>
+                    <p class="card-text">
+                        光是逛街就能感受到大阪人熱情和活力的道頓堀，可謂大阪必遊景點！在有名的巨大招牌前拍記念照、品嚐當地美食，坐船觀光以及商店街血拼。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>10,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="10000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/必訪景點_京都_稻荷神社.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【京都】 伏見稻荷神社</h5>
+                    <p class="card-text">走進看不到盡頭的神祕千本鳥居！外國人訪日人氣NO.1的伏見稻荷大社。</p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>5,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="5000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/必訪景點_奈良_鹿.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【奈良】 公園餵鹿</h5>
+                    <p class="card-text">
+                        奈良曾是日本首都的所在地，也是個距離京都和大阪都很近的旅遊名勝，這裡最吸引人的地方就是有一群超可愛的鹿等著你餵餅。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>1,000</p>
+                        <button href="" class="add-to-cart ml-2 btn btn-link text-decoration-none" value="1000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center align-items-center" style="height:100px">
+            <a href="#" class="btn btn-primary" style="height: fit-content;">更多必訪景點</a>
+        </div>
+    </div>
+</section>
+
+<section id="local_snacks" class="container my-4 d-flex flex-column">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 300px; background: rgba(0, 0, 0, .5) url('../static/image/jp/在地美食小吃.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">在地美食小吃</h3>
+            <p class="fade card-text">由 WoW Travel 精心為各位吃貨挑選的日本在地美食小吃，沒吃過別說你來過日本！</p>
+        </div>
+    </div>
+    <div class="row d-flex flex-row flex-wrap">
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/在地美食小吃_壽司.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【東京】 築地市場 壽司</h5>
+                    <p class="card-text">
+                        全世界魚貨批發規模最大的築地市場一帶，聚集有為數眾多的壽司店，也是海內外饕客經常造訪的地區。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>1,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="1000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/在地美食小吃_關東煮.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【東京】 關東煮</h5>
+                    <p class="card-text">
+                        關東煮正如其名，來到關東怎能不享用被高湯燉煮超入味的關東煮呢！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>180</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="180">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/在地美食小吃_拉麵.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【大阪】 道頓堀 拉麵</h5>
+                    <p class="card-text">
+                        大阪道頓堀可說是日本著名的「拉麵激戰區」，大街小巷中隱藏了許多拉麵神店，WoW Travel 不藏私一一報給您。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>250</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="250">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/在地美食小吃_章魚燒.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【大阪】 道頓堀 章魚燒</h5>
+                    <p class="card-text">
+                        有別於台灣章魚燒的口感，一整塊大章魚腳，來到大阪道頓堀千萬別錯過！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>120</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="120">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/在地美食小吃_天婦羅.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【京都】 嵐山 天婦羅</h5>
+                    <p class="card-text">
+                        穿過竹林小徑、走過渡月橋，吃著蕎麥麵、天婦羅配湖畔美景，可謂一大享受！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>300</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="300">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/在地美食小吃_抹茶甜點.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【京都】 祇園 抹茶甜點</h5>
+                    <p class="card-text">
+                        抹茶還需要說明嗎？你認真？
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>350</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="350">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center align-items-center" style="height:100px">
+            <a href="#" class="btn btn-primary" style="height: fit-content;">更多在地美食小吃</a>
+        </div>
+    </div>
+</section>
+
+<section id="shopping" class="container my-4 d-flex flex-column">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 300px; background: rgba(0, 0, 0, .5) url('../static/image/jp/購物.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">購物</h3>
+            <p class="fade card-text">國民服飾、時尚精品、藥妝家電、模型玩具，懶人包通通在這！</p>
+        </div>
+    </div>
+    <div class="row d-flex flex-row flex-wrap">
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/購物_百貨.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【日本】 百貨商場</h5>
+                    <p class="card-text">
+                        百貨公司通常都會在日本的各大主要都市設店，甚至可以說是絕對少不了的。從化妝品、食品及服飾雜貨讓您一次掌握。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>10,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="10000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/購物_唐吉軻德.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【日本】 唐吉軻德</h5>
+                    <p class="card-text">
+                        日本知名雜貨店唐吉軻德，有多種商品等著大家來挖寶！WoW Travel 幫各位整理了必買的零食、泡麵和生鮮雜貨，讓您不再頭昏眼花。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>2,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="2000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/購物_藥妝.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【日本】 藥妝</h5>
+                    <p class="card-text">
+                        日本藥品法規很嚴格，副作用通常都不會太大，感冒藥、腸胃藥、痠痛貼布、彩妝、面膜洗面乳⋯等，可說是旅日必買哦！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>3,000</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="3000">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center align-items-center" style="height:100px">
+            <a href="#" class="btn btn-primary" style="height: fit-content;">更多購物</a>
+        </div>
+    </div>
+</section>
+
+<section id="theme_park" class="container my-4 d-flex flex-column">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 300px; background: rgba(0, 0, 0, .5) url('../static/image/jp/主題樂園.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">主題樂園門票</h3>
+            <p class="fade card-text">男女約會、親子出遊的好選擇！</p>
+        </div>
+    </div>
+    <div class="row d-flex flex-row flex-wrap">
+        <div class="mt-4 col-12 col-md-6 col-lg-6">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/主題樂園_迪士尼.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【東京】 迪士尼樂園</h5>
+                    <p class="card-text">
+                        米老鼠、小熊維尼、巴斯光年、迪士尼公主等知名角色將在迪士尼城堡中，與大家一同進入童年回憶，探索一個個未知世界。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>2,150</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="2150">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-6">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/主題樂園_環球影城.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【大阪】 環球影城</h5>
+                    <p class="card-text">
+                        世界第一座「超級任天堂世界」已於2021年3月18日在大阪環球影城正式開幕。現在就一起跳進瑪利歐世界中，打倒庫巴拯救碧姬公主吧！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>2,090</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="2090">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center align-items-center" style="height:100px">
+            <a href="#" class="btn btn-primary" style="height: fit-content;">更多主題樂園門票</a>
+        </div>
+    </div>
+</section>
+
+<section id="transportation" class="container my-4 d-flex flex-column">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 300px; background: rgba(0, 0, 0, .3) url('../static/image/jp/交通.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">交通票券</h3>
+            <p class="fade card-text">一次搞懂日本電車、巴士、新幹線等大眾運輸交通工具的乘車方式及購票方式！</p>
+        </div>
+    </div>
+    <div class="row d-flex flex-row flex-wrap">
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/交通_新幹線.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【日本】 新幹線</h5>
+                    <p class="card-text">
+                        新幹線可以讓你在意想不到的短時間內四處旅行，旅途中還能舒適地坐在乾淨舒適的位子上好好放鬆呢！
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>960</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="960">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/交通_ICOCA.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【日本】 ICOCA</h5>
+                    <p class="card-text">
+                        ICOCA就像是台灣的「悠遊卡」和「一卡通」，每次搭乘大眾交通工具只需朝感應機碰一下，就能輕鬆地搭車及購物。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>600</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="600">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <img class="card-img-top" src="../static/image/jp/交通_大阪周遊卡.jpg" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">【大阪】 周遊卡</h5>
+                    <p class="card-text">
+                        1天內可無限次搭乘大阪地鐵、大阪公車全線或指定範圍內私鐵路線，並可免費參觀50處以上著名景點及設施。
+                    </p>
+                    <div class="card-text d-flex flex-row justify-content-end align-items-end">
+                        <p class="mb-1" style="font-size: larger;"><span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>580</p>
+                        <button class="add-to-cart ml-2 btn btn-link text-decoration-none" value="580">加入行程</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center align-items-center" style="height:100px">
+            <a href="#" class="btn btn-primary" style="height: fit-content;">更多交通票券</a>
+        </div>
+    </div>
+</section>
+
+<section id="amounts" class="container my-4 d-flex flex-column">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 300px; background: rgba(0, 0, 0, .5) url('../static/image/jp/旅費.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">旅費試算</h3>
+            <p class="fade card-text">還在為出國時不知道如何抓預算而煩惱嗎？<br> WoW Travel 通通幫您算好！ ( 不含機票、住宿費用 )</p>
+        </div>
+    </div>
+    <div class="mt-4 px-0 col-12 col-lg-6 align-self-end">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">此趟旅費大略金額試算：</h5>
+                <div class="card-text d-flex flex-column justify-content-end">
+                    <div class="d-flex justify-content-end">
+                        <p class="m-0 mr-3 pt-1" style="font-size: larger;">
+                            <span class="text-muted" style="font-size: medium;">TWD&nbsp;</span>
+                            <span class="result">0</span>
+                        </p>
+                        <a href="{{url_for('jp_list')}}" class="to-cart btn btn-link text-decoration-none" style="color:#fff; background-color: rgb(38, 62, 133);">去結帳</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
