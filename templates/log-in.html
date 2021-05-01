@@ -10,32 +10,36 @@
         border-radius: 20px;
         box-shadow: 0px 0px 10px #555;
     }
-    
+
     .welcome-text {
         margin-top: 20px;
         text-align: center;
         color: rgb(38, 62, 133);
     }
-    
+
     .welcome-text p {
         font-size: 20px;
         font-weight: bold;
     }
-    
-    .input {
-        margin-top: 18px;
-        font-size: 22px;
-    }
-    
+
     .input-border {
         border: #aaa solid 1px;
         border-radius: 5px;
     }
-    
+
+    .login {
+        display: block;
+    }
+
+    #registered-div {
+        display: none;
+        z-index: 2;
+    }
+
     .input-name {
         width: 49%;
     }
-    
+
     .green-btn {
         margin: 20px 0px;
         width: fit-content;
@@ -43,54 +47,60 @@
         border-radius: 5px;
         line-height: 35px;
     }
-    
+
     .w-33 {
         width: 33%;
     }
-    
+
     .gender label {
         position: relative;
     }
-    
+
     .gender input {
         position: absolute;
     }
-    
+
     input.valid {
         border-color: green;
     }
-    
+
     input.invalid {
         border-color: red;
     }
 </style>
 {% endblock %} {% block script %}
 <script>
-    $(document).ready(function() {
-        // create birthday <option>
-        var date = new Date()
-        var this_year = date.getFullYear()
-        var this_month = date.getMonth() + 1
-        var today = date.getDate()
+    $(document).ready(function () {
+        // 註冊
+        // $('#registered-div').hide()
+        $('#registered-btn').click(function () {
+            $('#registered-div').css('display', 'block')
+            $('.login').hide(300)
+        })
+
+        // Automatically create a dynamic date drop-down list
+        var today = new Date()
+        var this_year = today.getFullYear()
+        var this_month = today.getMonth() + 1 // 0 ~ 11
+        var date = today.getDate()
 
         for (let i = this_year; i >= this_year - 100; i--) {
-            let txt = "<option value='" + (i) + "'>" + (i) + "</option>";
+            let txt = "<option value='" + (i) + "'>" + (i) + "</option>"
             $('#birthday_year').append(txt)
         }
         for (let i = 1; i <= 12; i++) {
-            let txt = "<option value='" + (i) + "'>" + (i) + "月</option>";
+            let txt = "<option value='" + (i) + "'>" + (i) + "月</option>"
+            if (i == this_month) { txt = "<option value='" + (i) + "' selected>" + (i) + "月</option>" }
             $('#birthday_month').append(txt)
         }
         for (let i = 1; i <= 31; i++) {
-            let txt = "<option value='" + (i) + "'>" + (i) + "</option>";
+            let txt = "<option value='" + (i) + "'>" + (i) + "</option>"
+            if (i == date) { txt = "<option value='" + (i) + "' selected>" + (i) + "</option>" }
             $('#birthday_day').append(txt)
         }
 
-        birthday_year.onclick = function() {
-            birthday_month.options[0].selected = true;
-            birthday_day.options[0].selected = true;
-        }
-        $('#birthday_month').click(function() {
+        // 日期隨月份生成 (閏月、大小月)
+        $('#birthday_month').click(function () {
             let days;
 
             if ($('#birthday_month').val() == 2) {
@@ -137,10 +147,18 @@
             return false
         });
 
+        // 選年，初始月份和日期
+        //$('#birthday_year').click(function () {
+        // JQ $("#birthday_month")[0].selectedIndex = 0;
+        //    $("#birthday_day")[0].selectedIndex = 0;
+        // JS birthday_month.options[0].selected = true;
+        //    birthday_day.options[0].selected = true;
+        //})
+
         // 建立新帳號表單驗證
         let inputs = document.querySelectorAll('input')
         inputs.forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 if (input.checkValidity()) {
                     input.classList.add('valid')
                     input.classList.remove('invalid')
@@ -150,20 +168,81 @@
                 }
             })
         });
-        // let rule_name = /^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$/;
-        // let rule_email = /^([A-za-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
-        // let rule_password = /^(?=^.{6,}$)((?=.*[A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z]))^.*$/;
 
-        // $('#last_name').blur(function() {
-        //     if (rule_name.test($(this).val())) {
-        //         $(this).css("border-color", "green")
-        //     }
-        // })
-        // $('#first_name').blur(function() {
-        //     if (rule_name.test($(this).val())) {
-        //         $(this).css("border-color", "green")
-        //     }
-        // })
+        // 姓名兩欄連動 (中英混雜處理)
+        var rule_EN = /^[a-zA-Z]+$/
+        var rule_CH = /^[\u4E00-\u9FA5]+$/
+        var last_isEN, first_isEN = -1
+
+        $('#last_name').blur(function () {
+            let last_name = $('#last_name').val()
+            let first_name = $('#first_name').val()
+
+            if (rule_EN.test(last_name)) {
+                last_isEN = 1
+            } else if (rule_CH.test(last_name)) {
+                last_isEN = 0
+            } else {
+                last_isEN = -1
+                $(this).css("border-color", "red")
+                return
+            }
+            if (rule_EN.test(first_name)) {
+                first_isEN = 1
+            } else if (rule_CH.test(first_name)) {
+                first_isEN = 0
+            } else {
+                first_isEN = -1
+            }
+
+            if (first_isEN != -1) {
+                if (last_isEN != first_isEN) {
+                    $(this).css("border-color", "red")
+                } else {
+                    $(this).css("border-color", "green")
+                    $('#first_name').css("border-color", "green")
+                }
+            } else {
+                $(this).css("border-color", "green")
+            }
+        })
+        $('#first_name').blur(function () {
+            let last_name = $('#last_name').val()
+            let first_name = $('#first_name').val()
+
+            if (rule_EN.test(last_name)) {
+                last_isEN = 1
+            } else if (rule_CH.test(last_name)) {
+                last_isEN = 0
+            } else {
+                last_isEN = -1
+            }
+
+            if (rule_EN.test(first_name)) {
+                first_isEN = 1
+            } else if (rule_CH.test(first_name)) {
+                first_isEN = 0
+            } else {
+                first_isEN = -1
+                $(this).css("border-color", "red")
+                return
+            }
+
+            if (last_isEN != -1) {
+                if (last_isEN != first_isEN) {
+                    $(this).css("border-color", "red")
+                } else {
+                    $('#last_name').css("border-color", "green")
+                    $(this).css("border-color", "green")
+                }
+            } else {
+                $(this).css("border-color", "green")
+            }
+        })
+
+        // let rule_email = /^([A-za-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+        // let rule_password = /^[A-Za-z0-9]{6,}$/;
+
         // $('#email').blur(function() {
         //     if (rule_email.test($(this).val())) {
         //         $(this).css("border-color", "green")
@@ -174,35 +253,65 @@
         //         $(this).css("border-color", "green")
         //    }
         // })
-        $('#birthday_year').blur(function() {
+
+        // 年月日三欄連動 (生日>今日)
+        var birthday, flag_month = 0, flag_day = 0
+
+        $('#birthday_year').blur(function () {
             $(this).css("border-color", "green")
+            birthday = new Date($('#birthday_year').val(), $('#birthday_month').val() - 1, $('#birthday_day').val())
+            if (birthday > today) {
+                $('#birthday_month').css("border-color", "red")
+                $('#birthday_day').css("border-color", "red")
+            } else {
+                if (flag_month == 1) {
+                    $('#birthday_month').css("border-color", "green")
+                }
+                if (flag_day == 1) {
+                    $('#birthday_day').css("border-color", "green")
+                }
+            }
         });
-        $('#birthday_month').blur(function() {
-            if ($('#birthday_year').val() == this_year) {
-                if ($(this).val() > this_month) {
-                    $(this).css("border-color", "red")
-                } else {
-                    $(this).css("border-color", "green")
+
+        $('#birthday_month').blur(function () {
+            flag_month = 1
+            birthday = new Date($('#birthday_year').val(), $('#birthday_month').val() - 1, $('#birthday_day').val())
+            if (birthday > today) {
+                $(this).css("border-color", "red")
+                if (flag_day == 1) {
+                    $('#birthday_day').css("border-color", "red")
                 }
             } else {
                 $(this).css("border-color", "green")
+                if (flag_day == 1) {
+                    $('#birthday_day').css("border-color", "green")
+                }
             }
         });
-        $('#birthday_day').blur(function() {
-            if ($('#birthday_year').val() == this_year) {
-                if ($('#birthday_month').val() == this_month) {
-                    if ($(this).val() > today) {
-                        $(this).css("border-color", "red")
-                    } else {
-                        $(this).css("border-color", "green")
-                    }
-                } else {
-                    $(this).css("border-color", "green")
+
+        $('#birthday_day').blur(function () {
+            flag_day = 1
+            birthday = new Date($('#birthday_year').val(), $('#birthday_month').val() - 1, $('#birthday_day').val())
+            if (birthday > today) {
+                $(this).css("border-color", "red")
+                if (flag_month == 1) {
+                    $('#birthday_month').css("border-color", "red")
                 }
             } else {
                 $(this).css("border-color", "green")
+                if (flag_month == 1) {
+                    $('#birthday_month').css("border-color", "green")
+                }
             }
         });
+        // todo onsubmit="return(verify());
+        // function verify() {
+        //     if ($('#last_name').val() == '') {
+        //         console.log('性別不能為空')
+        //         return false
+        //     }
+        //     return true
+        // }
     });
 </script>
 {% endblock %} {% block alert %}{% endblock %} {% block content %}
@@ -212,31 +321,40 @@
         <p>專屬於您的旅遊網站</p>
     </div>
 
-    <!-- <form class="d-flex flex-column align-items-center" action="" method="POST">
-            <input class="input-border mb-3 p-2 col-md-8 col-lg-4" type="email" name="email" placeholder="電子郵件">
-            <input class="input-border mb-3 p-2 col-md-8 col-lg-4" type="password" name="password" placeholder="密碼">
-            <input class="input-border mb-3 p-2 btn btn-primary col-md-8 col-lg-4" type="submit" name="submit" value="登入">
-            <a class="my-3 text-decoration-none" href="#">忘記密碼？</a>
-            <hr class="m-0 w-75" />
-            <button class="green-btn btn btn-success text-white">建立新帳號</button>
-        </form> -->
+    <!-- 登入表單 -->
+    <form class="login d-flex flex-column align-items-center" action="{{url_for('verify')}}" method="POST">
+        <input class="login input-border mb-3 p-2 col-md-8" type="email" name="member_email" placeholder="電子郵件"
+            pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
+        <input class="login input-border mb-3 p-2 col-md-8" type="password" name="member_password" placeholder="密碼"
+            pattern="^[A-Za-z0-9]{6,}$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
+        <input class="login input-border mb-3 p-2 btn btn-primary col-md-8" type="submit" name="submit" value="登入">
+        <a class="login mb-3 text-decoration-none" href="#">忘記密碼？</a>
+        <hr class="login m-0 w-75" />
+    </form>
+    <button class="login green-btn btn btn-success text-white align-self-center " id="registered-btn">建立新帳號</button>
 
-    <div>
+    <!-- 註冊表單 -->
+    <div id="registered-div">
         <div class="d-flex flex-column">
             <h4 class="pl-3 font-weight-bold">註冊</h4>
             <hr class="m-0 w-100" />
         </div>
 
-        <form class="create-account mb-3 d-flex flex-column" action="{{url_for('create')}}" method="POST">
+        <form class="mb-3 d-flex flex-column" name="registration_form" action="{{url_for('create')}}" method="POST"
+            onsubmit="return(verify());">
             <div class="d-flex justify-content-between my-3">
-                <input class="input-name input-border p-2" type="text" name="last_name" id="last_name" placeholder="姓氏" pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文" required>
-                <input class="input-name input-border p-2" type="text" name="first_name" id="first_name" placeholder="名字" pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文" required>
+                <input class="input-name input-border p-2" type="text" name="last_name" id="last_name" placeholder="姓氏"
+                    pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文，不能中英混雜" required>
+                <input class="input-name input-border p-2" type="text" name="first_name" id="first_name"
+                    placeholder="名字" pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文，不能中英混雜" required>
             </div>
 
-            <input class="input-border mb-3 p-2" type="email" name="email" id="email" placeholder="電子郵件" pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
-            <input class="input-border mb-3 p-2" type="password" name="password" id="password" placeholder="設定密碼" pattern="^(?=^.{6,}$)((?=.*[A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z]))^.*$" title="密碼長度須6碼以上，並包含至少一個大寫、小寫字母和數字" required>
+            <input class="input-border mb-3 p-2" type="email" name="email" id="email" placeholder="電子郵件"
+                pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
+            <input class="input-border mb-3 p-2" type="password" name="password" id="password" placeholder="設定密碼"
+                pattern="^[A-Za-z0-9]{6,}$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
 
-            <label class="mt-1">出生日期</label>
+            <div class="mt-1">出生日期</div>
             <div class="d-flex">
                 <select class="input-border w-33 mb-2 p-2" name="birthday_year" id="birthday_year"></select>
                 <select class="input-border w-33 mx-2 mb-2 p-2" name="birthday_month" id="birthday_month"></select>

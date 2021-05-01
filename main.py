@@ -14,11 +14,11 @@ def log_in():
     return render_template('log-in.html')
 
 # todo 驗證帳號密碼是否在資料庫中
-# @app.route('/log-in', methods=['POST'])
-# def verify():
-#     pass
+@app.route('/verify', methods=['POST'])
+def verify():
+    return redirect(url_for('index'))
 
-@app.route('/log-in', methods=['POST'])
+@app.route('/create', methods=['POST'])
 def create():
     if request.method == 'POST':
         con = sql.connect('database.db')
@@ -44,9 +44,7 @@ def create():
             else:
                 age = int(t[0]) - int(birthday_year) - 1
 
-            # todo 驗證是否有此Email
-
-            # todo 密碼需有大寫字母 字元不可重複3次
+            # todo 驗證表單資料是否正確再放入資料庫
 
             con.execute('INSERT INTO member(name, email, password, birthday, age, gender) VALUES(?, ?, ?, ?, ?, ?)', (name, email, password, birthday, age, gender))
             con.commit()
@@ -57,7 +55,7 @@ def create():
             con.rollback()
         finally:
             con.close()
-            return redirect(url_for('index'))
+            return redirect(url_for('log_in'))
 
 @app.route('/jp')
 def jp():
