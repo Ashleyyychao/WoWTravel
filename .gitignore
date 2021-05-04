@@ -40,5 +40,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,windows
-__pycache__/db.cpython-39.pyc
-__pycache__/main.cpython-39.pyc
+
+*.pyc
