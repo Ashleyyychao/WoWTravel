@@ -1,633 +1,239 @@
-{% extends "index.html" %} {% block title %}jp-list{% endblock %} {% block style %}
-<style>
-    /* header */
-    
-    .logo {
-        display: flex;
-        align-items: center
-    }
-    
-    .navbar-dark .navbar-nav .nav-link {
-        color: rgba(255, 255, 255);
-    }
-    
-    .dropdown-item:hover {
-        color: rgb(38, 62, 133);
-    }
-    
-    .bg-color {
-        background-color: rgb(38, 62, 133);
-    }
-    
-    .btn-outline-success {
-        color: #ecf1ed;
-        border-color: #f8faf9;
-    }
-    
-    .bg-color {
-        background-color: rgb(38, 62, 133);
-    }
-    /* 以下為新增 */
-    /*nav*/
-    
-    nav {
-        background-color: rgb(233, 231, 231);
-        padding-bottom: 10px;
-    }
-    
-    #nav {
-        padding-top: 60px;
-    }
-    
-    header a,
-    nav a,
-    footer a {
-        text-decoration: none;
-        color: black;
-    }
-    /*article*/
-    
-    article {
-        background-color: rgb(247, 247, 247);
-        min-height: 100vh;
-    }
-    
-    #section img {
-        height: 24px;
-        width: 24px;
-    }
-    
-    #card img {
-        width: 25px;
-    }
-    
-    #right-arrow img {
-        height: 28px;
-        margin-top: 5px;
-        margin-right: 20px;
-    }
-    
-    #hotel img {
-        height: 150px;
-        width: 225px;
-    }
-    
-    #button a {
-        color: white;
-        text-decoration: none;
-    }
-    
-    #recommend>div {
-        margin-bottom: 5px;
-    }
-    
-    main section img {
-        height: 30px;
-        width: 30px;
-    }
-    
-    #value {
-        background-color: rgb(236, 236, 236);
-    }
-    
-    #color_red {
-        color: red;
-    }
-    
-    #color_blue {
-        color: blue;
-    }
-    
-    #color_green {
-        color: green;
-    }
-    
-    #color_brown {
-        color: rgb(142, 86, 26);
-    }
-    
-    #color_gray {
-        color: gray;
-    }
-    
-    #item {
-        list-style-position: inside;
-    }
-    
-    #recommend-2 {
-        color: white;
-        background-color: orange;
-        padding: 2px 5px;
-    }
-    
-    #shopping_basket {
-        border: 2px dashed #0076b3;
-        color: #0076b3;
-        font-size: 18px;
-        text-align: center;
-        line-height: 25px;
-        width: 100px;
-    }
-</style>
-{% endblock %} {% block alert %}{% endblock %} {% block content %}
-<!---下方為nav--->
-
-<nav id="nav">
-    <div class="container">
-        <div class="col">
-            <small>您的位置：<a href="{{url_for('index')}}">WoW Travel</a> > <a href="{{url_for('jp')}}">日本自由行</a> > <a href="{{url_for('jp_list')}}">產品介紹頁</a></small>
-        </div>
-
-        <div class="col alert alert-danger alert-dismissible fade show" role="alert">
-            ❗ 嗨，已變更出發日為2021/04/13，因飯店或交通訂購需工作天，或交通有固定出發日。
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <div class="row ">
-            <div class="col-xl-3 col-5">📅
-                <input type="date" min="2021-04-13" max="2021-04-14" class="col-10 date custom-select custom-select-sm">
-            </div>
-
-            <div class="col-xl-2 col-5">🗾
-                <select class="col-10 custom-select custom-select-sm">
-                    <option selected>選擇地區</option>
-                    <option value="北海道">北海道</option>
-                    <option value="本州">本州</option>
-                    <option value="四國">四國</option>
-                    <option value="九州">九州</option>
-                  </select>
-            </div>
-
-            <div class="col-xl-2 col-5">🏨
-                <select class="col-10 custom-select custom-select-sm">
-                    <option selected>選擇住宿天數</option>
-                    <option value="1天">1天</option>
-                    <option value="2天">2天</option>
-                    <option value="3天">3天</option>
-                    <option value="4天">4天</option>
-                    <option value="5天">5天</option>
-                    <option value="6天">6天</option>
-                    <option value="7天">7天</option>
-                    <option value="8天">8天</option>
-                    <option value="9天">9天</option>
-                    <option value="10天">10天</option>
-                  </select>
-            </div>
-
-            <div class="col-xl-2 col-5">🏘
-                <select class="col-10 custom-select custom-select-sm">
-                    <option selected>選擇房間數</option>
-                    <option value="1間">1間</option>
-                    <option value="2間">2間</option>
-                    <option value="3間">3間</option>
-                    <option value="4間">4間</option>
-                    <option value="5間">5間</option>
-                    <option value="6間">6間</option>
-                    <option value="7間">7間</option>
-                    <option value="8間">8間</option>
-                    <option value="9間">9間</option>
-                    <option value="10間">10間</option>
-                  </select>
-            </div>
-
-            <div class="col-xl-2 col-5">👥
-                <select class="col-10 custom-select custom-select-sm">
-                      <option selected>選擇人數</option>
-                      <option value="1人">1人</option>
-                      <option value="2人">2人</option>
-                      <option value="3人">3人</option>
-                      <option value="4人">4人</option>
-                      <option value="5人">5人</option>
-                      <option value="6人">6人</option>
-                      <option value="7人">7人</option>
-                      <option value="8人">8人</option>
-                      <option value="9人">9人</option>
-                      <option value="10人">10人</option>
-                    </select>
-            </div>
-
-            <div class="col-1">
-                <button type="submit" class="btn btn-primary btn-sm" id="search">🔍</button>
-            </div>
-
-        </div>
-    </div>
-</nav>
-
-<!---下方為article--->
-
-<article>
-    <div class="container">
-        <main>
-            <div class="row justify-content-center">
-                <section id="section" class="p-2 col-12 col-lg-8">
-                    <div>
-                        <div class="m-1 h2">日本 機加酒自由行</div>
-                        <div class="m-1"><small>產品代碼 : 20210413 最少2天 1夜 ，最多1002天 1001夜</small></div>
-                    </div>
-
-                    <div>
-                        <div class="m-2 h5"><img src="../static/icon/list/airplane.jpg"><strong class="pl-2">交通-航空</strong></div>
-                        <div class="border border-dark mb-2">
-                            <div class="m-3 h5"><strong>去程 - 請選擇</strong></div>
-                            <div class="row mb-3 col-12">
-                                <div class="col-xl-5 col-8">
-                                    <form class="was-validated">
-                                        <div class="col-11">
-                                            <select class="custom-select" required>
+{% extends "list.html" %} {% block title %}jp-list{% endblock %} {% block path %}
+<div class="col">
+    <small>您的位置：<a href="{{url_for('index')}}">WoW Travel</a> > <a href="{{url_for('jp')}}">日本自由行</a> > <a href="{{url_for('jp_list')}}">產品介紹頁</a></small>
+</div>
+{% endblock %} {% block area %}
+<div class="col-xl-2 col-5">🗾
+    <select class="col-10 custom-select custom-select-sm">
+        <option selected>選擇地區</option>
+        <option value="北海道">北海道</option>
+        <option value="本州">本州</option>
+        <option value="四國">四國</option>
+        <option value="九州">九州</option>
+    </select>
+</div>
+{% endblock %} {% block schedule_name %}
+<div>
+    <div class="m-1 h2">日本 機加酒自由行</div>
+    <div class="m-1"><small>產品代碼 : 20210413 最少2天 1夜 ，最多1002天 1001夜</small></div>
+</div>
+{% endblock %} {% block traffic %}
+<div>
+    <div class="m-2 h5"><img src="../static/icon/list/airplane.jpg"><strong class="pl-2">交通-航空</strong></div>
+    <div class="border border-dark mb-2">
+        <div class="m-3 h5"><strong>去程 - 請選擇</strong></div>
+        <div class="row mb-3 col-12">
+            <div class="col-xl-5 col-8">
+                <form class="was-validated">
+                    <div class="col-11">
+                        <select class="custom-select" required>
                                             <option value="">選擇出發點</option>
                                             <option value="台北松山機場">台北松山機場</option>
+                                            <option value="桃園機場">桃園機場</option>
                                             <option value="台中機場">台中機場</option>
                                             <option value="嘉義機場">嘉義機場</option>
                                             <option value="台南機場">台南機場</option>
                                             <option value="高雄機場">高雄機場</option>
                                           </select>
-                                            <div class="invalid-feedback">請選擇去程出發點</div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div id="right-arrow"><img src="../static/icon/list/right-arrow.png"></div>
-                                <div class="col-xl-5 col-8">
-                                    <form class="was-validated">
-                                        <div class="col-11">
-                                            <select class="custom-select" required>
-                                                <option value="大阪機場">大阪機場</option>
-                                              </select>
-                                            <div class="invalid-feedback">請選擇去程目的地</div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="invalid-feedback">請選擇去程出發點</div>
+                    </div>
+                </form>
+            </div>
+            <div id="right-arrow"><img src="../static/icon/list/right-arrow.png"></div>
+            <div class="col-xl-5 col-8">
+                <form class="was-validated">
+                    <div class="col-11">
+                        <select class="custom-select" required>
+                                                                            <option value="大阪機場">大阪機場</option>
+                                                                          </select>
+                        <div class="invalid-feedback">請選擇去程目的地</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-                        <div class="border border-dark m-0">
-                            <div class="m-3 h5"><strong>回程 - 請選擇</strong></div>
-                            <div class="row mb-3 col-12">
-                                <div class="col-xl-5 col-8">
-                                    <form class="was-validated">
-                                        <div class="col-11">
-                                            <select class="custom-select" required>
-                                                <option value="大阪機場">大阪機場</option>
-                                              </select>
-                                            <div class="invalid-feedback">請選擇回程出發點</div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div id="right-arrow"><img src="../static/icon/list/right-arrow.png"></div>
-                                <div class="col-xl-5 col-8">
-                                    <form class="was-validated">
-                                        <div class="col-11">
-                                            <select class="custom-select" required>
+    <div class="border border-dark m-0">
+        <div class="m-3 h5"><strong>回程 - 請選擇</strong></div>
+        <div class="row mb-3 col-12">
+            <div class="col-xl-5 col-8">
+                <form class="was-validated">
+                    <div class="col-11">
+                        <select class="custom-select" required>
+                                                                            <option value="大阪機場">大阪機場</option>
+                                                                          </select>
+                        <div class="invalid-feedback">請選擇回程出發點</div>
+                    </div>
+                </form>
+            </div>
+            <div id="right-arrow"><img src="../static/icon/list/right-arrow.png"></div>
+            <div class="col-xl-5 col-8">
+                <form class="was-validated">
+                    <div class="col-11">
+                        <select class="custom-select" required>
                                             <option value="">選擇目的地</option>
                                             <option value="台北松山機場">台北松山機場</option>
+                                            <option value="桃園機場">桃園機場</option>
                                             <option value="台中機場">台中機場</option>
                                             <option value="嘉義機場">嘉義機場</option>
                                             <option value="台南機場">台南機場</option>
                                             <option value="高雄機場">高雄機場</option>
                                           </select>
-                                            <div class="invalid-feedback">請選擇回程目的地</div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="invalid-feedback">請選擇回程目的地</div>
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}{% block hotel %}
+<div>
+    <div class="m-2 h5"><img src="../static/icon/list/hotel.png"><strong class="pl-2">飯店</strong></div>
+    <div class="border border-dark">
+        <div class="ml-3">住宿1 2021/04/13(二)入住 1 晚， 2 成人</div>
+    </div>
+    <div id="hotel" class="row align-items-center border-bottom border-left border-right border-dark m-0">
+        <div class="col-12 col-xl-4"><img src="../static/image/list/jp-list/hotel_2.jpg"></div>
+        <div class="col-12 col-xl-5">FP大酒店 - 難波南</br>(FP HOTELS Grand South-Namba)</div>
+        <div class="col-12 col-xl-3">參考星等:<br>⭐⭐⭐⭐⭐</div>
+    </div>
+</div>
+{% endblock %} {% block recommend %}
+<div id="recommend">
+    <div class="m-2 h5 d-flex flex-row justify-content-between">
+        <div><img src="../static/icon/list/shopping-cart.png"><strong class="pl-2">推薦加購</strong></div>
+        <div id="shopping_basket">🛒已購(<span id="number" value="0">0</span>)</div>
+    </div>
+    <div class="d-flex flex-row justify-content-between align-items-center border border-dark">
+        <div id="recommend-2" class=" ml-3 mb-0 alert alert-primary" role="alert" style="min-width:38px"><small>推薦</small></div>
+        <div class="ml-3 mt-1 mr-auto h5"><strong>大阪城公園 - 大阪城天守閣</strong></div>
+        <div class="d-flex flex-column align-items-end mr-3" style="min-width:150px">
+            <div><span id="color_red" class="h4"><strong>TWD$2,000</strong></span>起</div>
+            <div id="color_gray"><del>TWD$5,000</del></div>
+        </div>
+        <div style="min-width:68px"><button id="buy_1" type="button" class="btn btn-danger mr-2">選購</div>
+    </div>
+    <div class="d-flex flex-row justify-content-between align-items-center border border-dark">
+        <div id="recommend-2" class=" ml-3 mb-0 alert alert-primary" role="alert" style="min-width:38px"><small>推薦</small></div>
+        <div class="ml-3 mt-1 mr-auto h5"><strong>大阪通天閣 - 新世界美食</strong></div>
+        <div class="d-flex flex-column align-items-end mr-3" style="min-width:150px">
+            <div><span id="color_red" class="h4"><strong>TWD$1,000</strong></span>起</div>
+            <div id="color_gray"><del>TWD$9,999</del></div>
+        </div>
+        <div style="min-width:68px"><button id="buy_2" type="button" class="btn btn-danger mr-2">選購</div>
+    </div>
+    <div class="d-flex flex-row align-items-center border border-dark">
+        <div id="recommend-2" class=" ml-3 mb-0 alert alert-primary" role="alert" style="min-width:38px"><small>推薦</small></div>
+        <div class="ml-3 mt-1 mr-auto h5"><strong>大阪歷史博物館</strong></div>
+        <div class="d-flex flex-column align-items-end mr-3" style="min-width:150px">
+            <div><span id="color_red" class="h4"><strong>TWD$6,666</strong></span>起</div>
+            <div id="color_gray"><del>TWD$9,999</del></div>
+        </div>
+        <div style="min-width:68px"><button id="buy_3" type="button" class="btn btn-danger mr-2">選購</div>
+    </div>
+</div>
+{% endblock %}
 
-                    <div>
-                        <div class="m-2 h5"><img src="../static/icon/list/hotel.png"><strong class="pl-2">飯店</strong></div>
-                        <div class="border border-dark">
-                            <div class="ml-3">住宿1 2021/04/13(二)入住 1 晚， 2 成人</div>
-                        </div>
-                        <div id="hotel" class="row align-items-center border-bottom border-left border-right border-dark m-0">
-                            <div class="col-12 col-xl-4"><img src="../static/image/list/jp-list/hotel_2.jpg"></div>
-                            <div class="col-12 col-xl-5">FP大酒店 - 難波南</br>(FP HOTELS Grand South-Namba)</div>
-                            <div class="col-12 col-xl-3">參考星等:<br>⭐⭐⭐⭐⭐</div>
-                        </div>
-                    </div>
-                    <div id="recommend">
-                        <div class="m-2 h5 d-flex flex-row justify-content-between">
-                            <div><img src="../static/icon/list/shopping-cart.png"><strong class="pl-2">推薦加購</strong></div>
-                            <div id="shopping_basket">🛒已購(<span id="number" value="0">0</span>)</div>
-                        </div>
-                        <div class="d-flex flex-row justify-content-between align-items-center border border-dark">
-                            <div id="recommend-2" class=" ml-3 mb-0 alert alert-primary" role="alert" style="min-width:38px"><small>推薦</small></div>
-                            <div class="ml-3 mt-1 mr-auto h5"><strong>大阪城公園 - 大阪城天守閣</strong></div>
-                            <div class="d-flex flex-column align-items-end mr-3" style="min-width:150px">
-                                <div><span id="color_red" class="h4"><strong>TWD$2,000</strong></span>起</div>
-                                <div id="color_gray"><del>TWD$5,000</del></div>
-                            </div>
-                            <div style="min-width:68px"><button id="buy_1" type="button" class="btn btn-danger mr-2">選購</button></div>
-                        </div>
-                        <div class="d-flex flex-row justify-content-between align-items-center border border-dark">
-                            <div id="recommend-2" class=" ml-3 mb-0 alert alert-primary" role="alert" style="min-width:38px"><small>   推薦</small></div>
-                            <div class="ml-3 mt-1 mr-auto h5"><strong>大阪通天閣 - 新世界美食</strong></div>
-                            <div class="d-flex flex-column align-items-end mr-3" style="min-width:150px">
-                                <div><span id="color_red" class="h4"><strong>TWD$1,000</strong></span>起</div>
-                                <div id="color_gray"><del>TWD$9,999</del></div>
-                            </div>
-                            <div style="min-width:68px"><button id="buy_2" type="button" class="btn btn-danger mr-2">選購</button></div>
-                        </div>
-                        <div class="d-flex flex-row align-items-center border border-dark">
-                            <div id="recommend-2" class=" ml-3 mb-0 alert alert-primary" role="alert" style="min-width:38px"><small>推薦</small></div>
-                            <div class="ml-3 mt-1 mr-auto h5"><strong>大阪歷史博物館</strong></div>
-                            <div class="d-flex flex-column align-items-end mr-3" style="min-width:150px">
-                                <div><span id="color_red" class="h4"><strong>TWD$6,666</strong></span>起</div>
-                                <div id="color_gray"><del>TWD$9,999</del></div>
-                            </div>
-                            <div style="min-width:68px"><button id="buy_3" type="button" class="btn btn-danger mr-2">選購</button></div>
-                        </div>
-                    </div>
-                </section>
+{% block cost %}
+<!---下方為aside--->
 
-                <!---下方為aside--->
+<aside class="p-2 d-flex flex-column col-lg-3 col-12 m-1">
+    <div class="border border-dark">
+        <div class="ml-3 mt-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                    加入比較
+                </label>
+            </div>
+        </div>
+        <div class="d-flex flex-row justify-content-end align-items-baseline mr-3"><span id="color_red" class="h4"><strong>$49,500</strong></span>起/人</div>
+        {% block reference %}
+        <div class="col-12" id="button">
 
-                <aside class="p-2 d-flex flex-column col-lg-3 col-12 m-1">
-                    <div class="border border-dark">
-                        <div class="ml-3 mt-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                <label class="form-check-label" for="defaultCheck1">
-                                  加入比較
-                                </label>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row justify-content-end align-items-baseline mr-3"><span id="color_red" class="h4"><strong>$49,500</strong></span>起/人</div>
-                        <div class="col-12" id="button">
+                        <!-- Button trigger modal -->
 
-                            <!-- Button trigger modal -->
-
-                            <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModal">
+                        <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModal">
                                 預訂
                               </button>
 
-                            <!-- Modal -->
+            <!-- Modal -->
 
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">錯誤</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">錯誤</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                       </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            公司已倒閉，前往推薦旅行社
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                                            <button type="button" class="btn btn-primary"><a href="https://www.liontravel.com/category/zh-tw/index" target="_blank">前往</a></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        <div id="color_green" class="d-flex flex-row justify-content-end mr-3">限1~4人(不含嬰兒)訂購</div>
-                        <div class="d-flex flex-row justify-content-end ml-3 mr-3"><small>2021年4月13日-2021年4月14日 2天</small></div>
-                        <div class="d-flex flex-row justify-content-end mr-3"><small>大阪，共1晚，1間房，2成人</small></div>
-                        <div class="d-flex flex-row justify-content-between align-items-baseline border-top mr-3 ml-3">
-                            <div>總金額</div>
-                            <div id="color_red" class="h4"><strong>TWD 99,000</strong></div>
+                        <div class="modal-body">
+                            公司已倒閉，前往推薦旅行社
                         </div>
-                        <div class="d-flex flex-column border-top border-bottom">
-                            <div class="ml-3 mr-3">刷卡分期資訊<small><a href="#">分期銀行方案</a></small></div>
-                            <div id="card" class="d-flex flex-row justify-content-start ml-3"><img src="../static/icon/list/visa.png"><img src="../static/icon/list/jcb.png"><img src="../static/icon/list/mastercard.png"><img src="../static/icon/list/american-express.png"><img src="../static/icon/list/symbols.png"></div>
-                        </div>
-                        <div id="table" class="d-flex flex-column justify-content-between border-bottom">
-                            <div class="d-flex flex-row justify-content-around ml-2">
-                                <div>3期 0利率 每期</div>
-                                <div class="mr-3">$33,000</div>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-row justify-content-around ml-2">
-                            <div>6期 0利率 每期</div>
-                            <div class="mr-3">$16,500</div>
-                        </div>
-
-                    </div>
-                </aside>
-            </div>
-        </main>
-        <main id="value">
-            <div class="col-12">
-                <section>
-                    <div>
-                        <div class="d-flex flex-column border-top">
-                            <div class="d-flex flex-row align-items-center m-2"><img src="../static/icon/list/file.png" class="mr-2">產品特色</div>
-                            <div>
-                                <p><strong>自己的旅程自己組 ， 機票/飯店自由搭配，
-                                    輕鬆自主安排自由行 ， 自助旅行 ， 旅遊說走就走！</strong></p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column border-top">
-                            <div class="d-flex flex-row align-items-center m-2"><img src="../static/icon/list/money.png" class="mr-2">費用說明</div>
-                            <div>
-                                <ul id="item">
-                                    <li> <span id="color_brown"><strong>費用包含</strong></span>
-                                        <p>
-                                            <ol>
-                                                <li>交通 ： 來回機票，成人各 2 張</li>
-                                                <li>飯店 ： FP大酒店 - 難波南 1 晚</li>
-                                            </ol>
-                                        </p>
-                                    </li>
-                                    <li> <span id="color_brown"><strong>費用不包含</strong></span>
-                                        <p>
-                                            <ol>
-                                                <li>小費：每日旅館客房清理及行李小費。</li>
-                                                <li>護照新辦及簽證。 </li>
-                                                <li>行程表上未載明之各項開支；自選建議行程之應付費用及交通費。</li>
-                                                <li>純係私人之消費：如行李超重費、酒店房內食物飲料酒類、洗衣、電話、網路使用費及私人交通費。</li>
-                                            </ol>
-                                        </p>
-                                    </li>
-                                </ul>
-
-
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column border-top">
-                            <div class="d-flex flex-row align-items-center m-2"><img src="../static/icon/list/warn.png" class="mr-2">提醒說明</div>
-                            <div>
-                                <nav>
-                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <a class="nav-link active" id="nav-beware-tab" data-toggle="tab" href="#nav-beware" role="tab" aria-controls="nav-beware" aria-selected="true">注意事項</a>
-                                        <a class="nav-link" id="nav-cancel-tab" data-toggle="tab" href="#nav-cancel" role="tab" aria-controls="nav-cancel" aria-selected="false">取消規定</a>
-                                        <a class="nav-link" id="nav-remind-tab" data-toggle="tab" href="#nav-remind" role="tab" aria-controls="nav-remind" aria-selected="false">入住小提醒</a>
-                                        <a class="nav-link" id="nav-inform-tab" data-toggle="tab" href="#nav-inform" role="tab" aria-controls="nav-inform" aria-selected="false">行李須知</a>
-                                    </div>
-                                </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade show active" id="nav-beware" role="tabpanel" aria-labelledby="nav-beware-tab">
-                                        <ol id="item" type="A">
-                                            <li><span id="color_red"><strong>旅客下訂前請先詳閱注意事項各條說明，下訂後視為已詳閱並同意各說明事項 ：</strong></span>
-                                                <p>
-                                                    <ol>
-                                                        <li id="color_red"><strong>本網報價若無立即付款，會因機票、酒店房況及房價異動等因素變動影響實際金額。</strong></li>
-                                                        <li>請注意訂購單上旅客姓名及英文姓名是否正確，英文姓名須與護照上之英文姓名完全相同。<br>※ 一經開立住宿券後，如需更改名字，本公司將收取更改服務費每人每次新台幣 $300元整。<br>※ 若已開立機票，則另外加收航空公司收取之改票手續費及本公司各線改票服務費為 美加/歐洲/紐澳/非洲線：TWD800；亞洲/港澳大陸線：TWD600。<br>※ 所有更改及改票動作，請於<strong>出發前三個工作天</strong>提出需求並務必於<strong>出發前一個工作天內</strong>完成。</li>
-                                                        <li id="color_red"><strong>各航空公司搭機年齡限制不同，未滿20歲旅客須由年滿20歲大人陪同搭機。</strong></li>
-                                                        <li>航空公司保有班機時刻及機型調度之最終權利，若臨時變更敬請見諒。為確保航班臨時異動可即時通知，<span id="color_red">請旅客務必提供正確的聯絡電話。</span></li>
-                                                        <li>孕婦搭乘之規定會因各航空公司而有所不同，一般懷孕二十八至三十六週須請產檢醫生填寫航空公司專用診斷書，三十六週後須醫護人員同行搭乘或禁止搭乘，相關規定依航空公司之規定為主。</li>
-                                                        <li>進入各國皆需六個月以上有效期限的護照及出入境國有效簽證，另役男出境需加蓋兵役備查章，請務必於訂購機票之同時，檢查您的證照資料，以防疏失而無法出國。如需本公司協助辦理簽證事宜，請與我們聯絡。</li>
-                                                        <li>請於班機起飛前二個小時抵達機場，並自行考量交通狀況提早出門。另請務必於航空公司規定之時間內抵達登機閘口，以免錯過航班起飛時間。</li>
-                                                        <li id="color_red"><strong>因各酒店辦理入住年齡限制不同，故未滿20歲旅客請於需求訂房時與業務再次確認酒店是否可辦理入住。</strong></li>
-                                                        <li>若未於購買住宿產品當日入住，則視同自願放棄，恕不另退費。</li>
-                                                        <li>本行程住宿之飯店優惠對象為持台灣護照，如持外國護照入住者，須另加收費用，加價之標準依酒店規定為主。</li>
-                                                        <li>特殊需求（如：床型一大床或二小床、高或低樓層、吸煙或禁煙房、非邊間或連通房等）請事先告知業務，業務僅代向酒店提出需求。實際情況仍須視酒店當日房況安排而定。</li>
-                                                        <li>日本房型定義：<br>- 膠囊房/女/男宿舍客房單人房(CAPSULE ROOM)：可使用的空間侷限於一間約2*1*1.25公尺大小的狹小空間，若可接受再行預訂。<br>- 單人房(SGL)：標準的單人房一張床。<br>- 雙人房一中床(SEMI-DBLB)：單人房加床或較小的雙人房(需以酒店安排為主)，房間面積及床的尺寸都較小，若可接受再行預訂。<br><span id="color_red">- 雙人房一中床(1 LARGE
-                                                                TWINBED)：供雙人使用的單人房或較小的雙人房(需以酒店安排為主)，房間面積及床的尺寸都較小(設置為1張單人床或1張中床)，若可接受再行預訂。</span>
-                                                            <br>- 雙人房一張床(DBLB)：標準的雙人房一張床。<br>- 雙人房二張床(TWIN)：標準的雙人房二張床。<br>- 三人房(TRP)：指可入住3人的客房，但房間內床位的分配會隨地區別/飯店別而有所差異。(非指一定會提供3張床)，實際情況以酒店安排為主。<br>每種房型均有入住人數限制，若於當地有親友同住，且超出原先安排人數，酒店有權拒絕旅客入住或要求旅客支付差額。</li>
-                                                        <li>部分酒店不提供個人用品（如：毛巾、牙刷、牙膏、沐浴乳、洗髮精、香皂、拖鞋及個人習慣性藥品等）請自行攜帶。若須多加備品、寢具等，部分酒店須自行至櫃台付費領取。</li>
-                                                        <li>通常入住(Check-in)時間約為當地時間15：00；退房(Check-out)時間為當地時間中午12：00前；實際情形仍須視各酒店規定。如有提前住房、延後退房，請自行與酒店洽詢。</li>
-                                                        <li>酒店星等以當地認證為準，部份設施、環境、服務可能與國際星等飯店略有不同，如有額外之服務加強需求，請自行與酒店洽詢。</li>
-                                                        <li>自由行旅客請特別注意：國外飯店常有《押金入住》規定。當辦理Check in時，飯店會要求收取押金(可押現金或刷卡)。現金金額須視飯店規定，刷卡則為一張空白帳單。當辦理Check out時務必取回現金或當場撕毀刷卡單，以確保個人權益。</li>
-                                                    </ol>
-                                                </p>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-cancel" role="tabpanel" aria-labelledby="nav-cancel-tab">
-                                        <ol id="item">
-                                            <li>
-                                                <span id="color_red"><strong>「自由行取消作業費用規定」</strong></span>
-                                                <p>＊取消收取標準：以商品總價格(含稅) 減「本公司收取每人之退票手續費」減「航空公司退票手續費or罰金」減「飯店取消費用手續費or罰金」＝ 實際可退金額。 ＊機票取消之手續費或罰金，視各航空公司規定收取。 ＊飯店取消之手續費或罰金，依各個飯店回覆之金額為主。如為全程保證住房，欲取消行程，恕不另外退費。 ＊本公司收取每人之退票手續費，短程線 NT$1000，長程線NT$2000。</p>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-remind" role="tabpanel" aria-labelledby="nav-remind-tab">
-                                        <ol id="item">
-                                            <li>國外酒店常有《押金入住》規定
-                                                <p>會在旅客辦理Check in時，要求以信用卡或現金預付一定金額作為在飯店內消費簽帳的保證金。入住期間無額外消費，押金將於退房時全數退予旅客，請於辦理Check out時取回押金。退還方式：若旅客以現金支付保證金，則取回現金；若以信用卡支付保證金，取回刷卡單後請當場撕毀，以確保個人權益。(因各酒店政策不同，要求收取的押金費用略有不同，實際狀況仍須以入住酒店規定為主)。</p>
-                                            </li>
-                                            <li>住宿城市稅(City Tax)：
-                                                <p>東京、大阪當地市政府會徵收住宿城市稅。收取金額：每人每晚約100~300元日幣，城市稅之金額會因各酒店而略有不同，實際金額依入住酒店規定為主，請於酒店現場確認。</p>
-                                            </li>
-                                            <li>溫泉稅
-                                                <p>為保持溫泉設施之環境衛生及維修消防設施的費用，日本政府規定須徵收入湯稅。因此，若入住擁有溫泉設施的酒店、溫泉旅館以及在洗浴中心消費時，會酌收入湯稅(每晚每人約50~150元日幣)。此費用須於當地支付，請至當地確認並依規定向飯店支付即可。</p>
-                                            </li>
-                                            <li>京都市住宿稅
-                                                <p>根據有關條例的規定，京都市將從2018年10月1日起，針對在京都市内住宿的旅客收取「京都市住宿税」，計算方式如下</p>
-                                                <p>住宿費<span id="color_green">（※不含餐飲費用、消費稅、地方消費税和溫泉稅等之純住宿費／每人每晚）</span></p>
-                                                <p>20,000日元以下・・・・・・・・・・・・・・・200日元/每人每晚</p>
-                                                <p>20,000日元以上～50,000日元以下・・・・・・・500日元/每人每晚</p>
-                                                <p>50,000日元以上 ・・・・・・・・・・・・・・1,000日元/每人每晚</p>
-                                                ※金額會因各酒店而略有不同，實際金額依入住酒店規定為主，請於酒店現場確認。
-                                            </li>
-                                        </ol>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-inform" role="tabpanel" aria-labelledby="nav-inform-tab">
-                                        <ol id="item">
-                                            <p>行李須知</p>
-                                            <li>托運行李請依實際承運航空公司官網規定為主，機票之託運行李是根據航空公司於訂位系統中的票價規則進行自動分析而取得的，僅供參考，不保證其準確性。</li>
-                                            <li>各航空公司或不同航線之機票售價不同，票價組合不一定包含有免費行李或免費餐食或免費選位(例如：廉價航空、美國及歐洲內陸航線等)，如需購買行李、餐食或選位，請至航空公司官網、機場櫃檯或於飛機上購買。</li>
-                                            <li>行李是否可直掛目的地，須依航空公司、當地政府、機場規定為準。</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column border-top">
-                            <div class="d-flex flex-row align-items-center m-2"><img src="../static/icon/list/exclamation-mark-in-a-circle.png" class="mr-2">旅遊資訊</div>
-                            <div>
-                                <nav>
-                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <a class="nav-link active" id="nav-rule-tab" data-toggle="tab" href="#nav-rule" role="tab" aria-controls="nav-rule" aria-selected="true">安全守則</a>
-                                        <a class="nav-link" id="nav-beware_2-tab" data-toggle="tab" href="#nav-beware_2" role="tab" aria-controls="nav-beware_2" aria-selected="false">注意事項</a>
-                                    </div>
-                                </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade show active" id="nav-rule" role="tabpanel" aria-labelledby="nav-rule-tab">
-                                        <p>防疫小提醒</p>
-                                        <p id="color_red">即日起八大場所全面強制要求戴口罩，包含<span id="color_blue">醫療照顧機構、大眾運輸、賣場市集、教育學習場所、展演場所、宗教場所、娛樂場所、大型活動</span>等，提醒民眾務必配合。</p>
-                                        <p>《小提醒》<br/>▲國人在離島台灣好行、交通船或巴士仍有未戴口罩之情形，如有不戴或屢勸不聽者最高可罰款一萬五仟元。 更多防疫即時資訊可參考<a href="https://www.cdc.gov.tw/">衛生福利部疾病管制署</a>網頁</p>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-beware_2" role="tabpanel" aria-labelledby="nav-beware_2-tab">
-                                        <p><strong>廉價航空團體機票注意事項</strong></p>
-                                        <p id="color_red"><strong>旅客下訂前請先詳閱注意事項各條說明，下訂後視為已詳閱並同意各說明事項 ：</strong></p>
-                                        <p id="color_red"><strong>團體機位注意事項</strong></p>
-                                        <ol id="item">
-                                            <li>本行程為自由行不派領隊。</li>
-                                            <li id="color_red"><strong>此機票購買後，不可取消、不可更改日期/航班/航點、不可累積里程、無退票價值，開票後不可改名或換人。</strong></li>
-                                            <li>本自由行搭配機票若為廉價航空團體機票，依航空公司所制定的電子機票規格，電子機票內容會揭露團體全數旅客的英文姓名。</li>
-                                            <li id="color_red"><strong>團體機位無法提早開票，出發前(最晚出發前一天)方可提供電子機票，若有特殊因素需提早拿到機票者請自行斟酌是否訂購。</strong></li>
-                                            <li>本行程無送機人員,請自行至機場航空公司櫃檯辦理報到手續。</li>
-                                            <li>請於飛機起飛兩個小時前辦理登機手續，逾時航空公司有權利拒絕提供登機服務。</li>
-                                            <li id="color_red"><strong>因航空公司嬰兒名額有限，若有旅客須帶嬰兒，報名時請先與業務人員確認。(嬰兒實際名額依各航空公司規定為準)</strong></li>
-                                            <li>手提行李額度、托運行李加購公斤數與售價，各航空公司保有調整的權利。</li>
-                                            <li>台灣虎航如遇非人為因素(例如：颱風、天候等不可抗力因素)，造成航班時間變動或取消，將協助旅客更改航次，以利行程順暢，但不承擔賠償旅客損失責任，並保留航班時間調整及變更之權利。</li>
-                                            <li>台灣虎航不提供輪椅、嬰兒搖籃服務及其它任何嬰兒用品，一位成人只能抱一位嬰幼兒坐在膝上(不提供搖籃)。</li>
-                                            <li>虎航恕不提供選位服務</li>
-                                            <li>台灣虎航機上禁帶外食</li>
-                                        </ol>
-
-                                        <p>※虎航東京加購行李費用(單程)：加買行李5公斤每人230元，10公斤每人500元，15公斤每人800元，20公斤每人1150元。</p>
-                                        <p>註：請注意，任何單一行李仍不得超過30公斤。</p>
-                                        <p id="color_red">※以上如有需求，請於<strong>開票前</strong>告知服務人員加購，於開票後恕無法加購。</p>
-                                        <p><a href="https://static.liontech.com.tw/2trs/45/jpkr-191028.pdf">(2019/10/27起出發適用)廉航加購項目價格表</a></p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary"><a href="https://www.liontravel.com/category/zh-tw/index" target="_blank">前往</a></button>
                         </div>
                     </div>
-                </section>
+                </div>
             </div>
-        </main>
+        </div>
+        {% endblock %}
+        <div id="color_green" class="d-flex flex-row justify-content-end mr-3">限1~4人(不含嬰兒)訂購</div>
+        <div class="d-flex flex-row justify-content-end ml-3 mr-3"><small>2021年4月13日-2021年4月14日 2天</small></div>
+        <div class="d-flex flex-row justify-content-end mr-3"><small>大阪，共1晚，1間房，2成人</small></div>
+        <div class="d-flex flex-row justify-content-between align-items-baseline border-top mr-3 ml-3">
+            <div>總金額</div>
+            <div id="color_red" class="h4"><strong>TWD 99,000</strong></div>
+        </div>
+        <div class="d-flex flex-column border-top border-bottom">
+            <div class="ml-3 mr-3">刷卡分期資訊<small><a href="#">分期銀行方案</a></small></div>
+            <div id="card" class="d-flex flex-row justify-content-start ml-3"><img src="../static/icon/list/visa.png"><img src="../static/icon/list/jcb.png"><img src="../static/icon/list/mastercard.png"><img src="../static/icon/list/american-express.png"><img src="../static/icon/list/symbols.png"></div>
+        </div>
+        <div id="table" class="d-flex flex-column justify-content-between border-bottom">
+            <div class="d-flex flex-row justify-content-around ml-2">
+                <div>3期 0利率 每期</div>
+                <div class="mr-3">$33,000</div>
+            </div>
+        </div>
+        <div class="d-flex flex-row justify-content-around ml-2">
+            <div>6期 0利率 每期</div>
+            <div class="mr-3">$16,500</div>
+        </div>
     </div>
-</article>
-<script>
-    $(document).ready(function() {
-        $('.close').click(function() {
-            $('.full-screen').hide();
-        })
-    })
-</script>
-<script>
-    // var x = 0
-
-    // function add_purchase(obj) {
-    //     if (document.getElementById(obj.id).innerHTML == "選購") {
-    //         x++;
-    //         document.getElementById("number").innerHTML = x;
-    //         document.getElementById(obj.id).innerHTML = "已選購";
-    //         document.getElementById(obj.id).style = "background-color:gray;box-shadow:none;border:gray";
-    //     } else {
-    //         x--;
-    //         document.getElementById("number").innerHTML = x;
-    //         document.getElementById(obj.id).innerHTML = "選購";
-    //         document.getElementById(obj.id).style = "background-color:#dc3545;box-shadow:2px, #dc3545";
-    //     }
-    // }
-
-    $(document).ready(function() {
-        $("#recommend button").click(function() {
-            var id = $(this).attr('id') // 回傳id
-            var text = "#" + id; // 使用id前方需加"#"，class前方需加"."
-            if ($(text).text() == "選購") {
-                $(text).text("已選購");
-                $(text).css({
-                    "background-color": "gray",
-                    "border-width": "1px",
-                    "border-color": "gray"
-                });
-                $(text).toggleClass("btn-danger btn-secondary")
-                $("#number").text(function(i, origText) {
-                    return parseInt(origText) + 1;
-                });
-            } else if ($(text).text() == "已選購") {
-                $(text).text("選購");
-                $(text).css({
-                    "background-color": "#dc3545",
-                    "border-width": "1px",
-                    "border-color": "#dc3545"
-                });
-                $(text).toggleClass("btn-danger btn-secondary")
-                $("#number").text(function(i, origText) {
-                    return parseInt(origText) - 1;
-                });
-            }
-        })
-    })
-</script>
+</aside>
+{% endblock %} 
+{% block feature_explain %}
+<div class="d-flex flex-column border-top">
+    <div class="d-flex flex-row align-items-center m-2 icon"><img src="../static/icon/list/file.png" class="mr-2">產品特色</div>
+    <div>
+        <p><strong>自己的旅程自己組 ， 機票/飯店自由搭配，輕鬆自主安排自由行 ， 自助旅行 ， 旅遊說走就走！</strong></p>
+    </div>
+</div>
+<div class="d-flex flex-column border-top">
+    <div class="d-flex flex-row align-items-center m-2 icon"><img src="../static/icon/list/money.png" class="mr-2">費用說明</div>
+    <div>
+        <ul id="item">
+            <li> <span id="color_brown"><strong>費用包含</strong></span>
+                <p>
+                    <ol>
+                        <li>交通 ： 來回機票，成人各 2 張</li>
+                        <li>飯店 ： FP大酒店 - 難波南 1 晚</li>
+                    </ol>
+                </p>
+            </li>
+            <li> <span id="color_brown"><strong>費用不包含</strong></span>
+                <p>
+                    <ol>
+                        <li>小費：每日旅館客房清理及行李小費。</li>
+                        <li>護照新辦及簽證。 </li>
+                        <li>行程表上未載明之各項開支；自選建議行程之應付費用及交通費。</li>
+                        <li>純係私人之消費：如行李超重費、酒店房內食物飲料酒類、洗衣、電話、網路使用費及私人交通費。</li>
+                    </ol>
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
 {% endblock %}
