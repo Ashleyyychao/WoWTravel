@@ -1,21 +1,71 @@
-from flask import Flask, render_template, request, url_for, make_response, jsonify, redirect, abort
+from flask import Flask, render_template, redirect, url_for, request, make_response, jsonify, abort, session
 import sqlite3 as sql
 import json
+import os
 import time
 # db.py
 import db
 
 DB = db.DatebaseDriver()
 app = Flask(__name__)
+# 為了安全性, Flask 要求設定 SECRET_KEY, 才能使用 session
+app.config['SECRET_KEY'] = os.urandom(24)
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/log-in')
 def log_in():
-    # todo 已登入後要顯示會員基本資料
+    # get session
+    if 'LoggedIn' in session:
+        if session['LoggedIn']:
+            return redirect(url_for('member'))
     return render_template('log-in.html')
+
+
+@app.route('/member')
+def member():
+    if 'LoggedIn' in session:
+        email = session['email']
+        password = session['password']
+        row = DB.get_member_by_login(email, password)
+        return render_template('member.html', row=row)
+    return redirect(url_for('log_in'))
+
+
+@app.route('/update', methods=['POST'])
+def update():
+    if request.method == 'POST':
+        new_password = request.form['password']
+        if 'LoggedIn' in session:
+            email = session['email']
+            old_password = session['password']
+
+            rowcount = DB.update_member_password_by_login(
+                new_password, email, old_password)
+            if rowcount == 1:
+                password = new_password
+                msg = f"密碼已更改成功! 新密碼為：{new_password}"
+            else:
+                password = old_password
+                msg = "更新失敗"
+                return redirect('member')
+
+            row = DB.get_member_by_login(email, password)
+            return render_template('member.html', row=row, msg=msg)
+
+
+@app.route('/log-out', methods=['POST'])
+def log_out():
+    session.pop('LoggedIn', False)
+    session.pop('email', None)
+    session.pop('password', None)
+    print(session)
+    return redirect(url_for('log_in'))
+
 
 @app.route('/verify', methods=['POST'])
 def verify():
@@ -26,14 +76,20 @@ def verify():
     # todo 驗證帳密是否含有攻擊字元再執行SQL指令
     # Ex: "' or '1' = '1'"
 
-    member_name = DB.get_member_name_by_login(email, password)
-    if member_name is None:
-        print("帳號密碼有誤，請重新輸入")
+    member = DB.get_member_by_login(email, password)
+    if member is None:
+        msg = "帳號密碼有誤，請重新輸入"
+        return render_template('log-in.html', msg=msg)
     else:
-        print(f"{member_name} 歡迎回來")
+        # set session
+        session['LoggedIn'] = True
+        session['email'] = email
+        session['password'] = password
+        member_name = member[1]
+        print(f"{member_name} 登入成功")
         return redirect(url_for('index'))
-
     return redirect(url_for('log_in'))
+
 
 @app.route('/create', methods=['POST'])
 def create():
@@ -61,23 +117,24 @@ def create():
         # todo 驗證表單資料是否正確再放入資料庫
         # todo 驗證帳密是否含有攻擊字元再執行SQL指令
 
-        ismember = DB.is_member(email)
-        if ismember:
-            print("此信箱已被註冊過")
+        is_member = DB.is_member(email)
+        if is_member:
+            msg = "此信箱已被註冊過"
         else:
-            member_id = DB.insert_member_table(name, email, password, birthday, age, gender)
-
+            member_id = DB.insert_member_table(
+                name, email, password, birthday, age, gender)
             member = DB.get_member_by_id(member_id)
-            member_name = DB.get_member_name_by_login(email, password)
             if member is None:
-                print("註冊失敗")
-            
-            print(f"{member_name} 您好! 很高興能為您服務~")
-        return redirect(url_for('log_in'))
+                msg = "註冊失敗"
+            else:
+                msg = f"{member[1]} 您已註冊成功"
+        return render_template('log-in.html', msg=msg)
+
 
 @app.route('/jp')
 def jp():
     return render_template('jp.html')
+
 
 @app.route('/jp-list')
 def jp_list():

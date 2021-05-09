@@ -1,4 +1,4 @@
-{% extends "list.html" %} {% block title %}jp-list{% endblock %} {% block path %}
+{% extends "list.html" %} {% block path %}
 <div class="col">
     <small>您的位置：<a href="{{url_for('index')}}">WoW Travel</a> > <a href="{{url_for('jp')}}">日本自由行</a> > <a href="{{url_for('jp_list')}}">產品介紹頁</a></small>
 </div>
@@ -202,38 +202,37 @@
             <div class="mr-3">$16,500</div>
         </div>
     </div>
-</aside>
-{% endblock %} 
-{% block feature_explain %}
-<div class="d-flex flex-column border-top">
-    <div class="d-flex flex-row align-items-center m-2 icon"><img src="../static/icon/list/file.png" class="mr-2">產品特色</div>
-    <div>
-        <p><strong>自己的旅程自己組 ， 機票/飯店自由搭配，輕鬆自主安排自由行 ， 自助旅行 ， 旅遊說走就走！</strong></p>
+    </aside>
+    {% endblock %} {% block feature_explain %}
+    <div class="d-flex flex-column border-top">
+        <div class="d-flex flex-row align-items-center m-2 icon"><img src="../static/icon/list/file.png" class="mr-2">產品特色</div>
+        <div>
+            <p><strong>自己的旅程自己組 ， 機票/飯店自由搭配，輕鬆自主安排自由行 ， 自助旅行 ， 旅遊說走就走！</strong></p>
+        </div>
     </div>
-</div>
-<div class="d-flex flex-column border-top">
-    <div class="d-flex flex-row align-items-center m-2 icon"><img src="../static/icon/list/money.png" class="mr-2">費用說明</div>
-    <div>
-        <ul id="item">
-            <li> <span id="color_brown"><strong>費用包含</strong></span>
-                <p>
-                    <ol>
-                        <li>交通 ： 來回機票，成人各 2 張</li>
-                        <li>飯店 ： FP大酒店 - 難波南 1 晚</li>
-                    </ol>
-                </p>
-            </li>
-            <li> <span id="color_brown"><strong>費用不包含</strong></span>
-                <p>
-                    <ol>
-                        <li>小費：每日旅館客房清理及行李小費。</li>
-                        <li>護照新辦及簽證。 </li>
-                        <li>行程表上未載明之各項開支；自選建議行程之應付費用及交通費。</li>
-                        <li>純係私人之消費：如行李超重費、酒店房內食物飲料酒類、洗衣、電話、網路使用費及私人交通費。</li>
-                    </ol>
-                </p>
-            </li>
-        </ul>
+    <div class="d-flex flex-column border-top">
+        <div class="d-flex flex-row align-items-center m-2 icon"><img src="../static/icon/list/money.png" class="mr-2">費用說明</div>
+        <div>
+            <ul id="item">
+                <li> <span id="color_brown"><strong>費用包含</strong></span>
+                    <p>
+                        <ol>
+                            <li>交通 ： 來回機票，成人各 2 張</li>
+                            <li>飯店 ： FP大酒店 - 難波南 1 晚</li>
+                        </ol>
+                    </p>
+                </li>
+                <li> <span id="color_brown"><strong>費用不包含</strong></span>
+                    <p>
+                        <ol>
+                            <li>小費：每日旅館客房清理及行李小費。</li>
+                            <li>護照新辦及簽證。 </li>
+                            <li>行程表上未載明之各項開支；自選建議行程之應付費用及交通費。</li>
+                            <li>純係私人之消費：如行李超重費、酒店房內食物飲料酒類、洗衣、電話、網路使用費及私人交通費。</li>
+                        </ol>
+                    </p>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

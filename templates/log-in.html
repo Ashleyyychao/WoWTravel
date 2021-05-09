@@ -1,4 +1,4 @@
-{% extends "index.html" %} {% block title %}會員登入{% endblock %} {% block style %}
+{% extends "index.html" %} {% block title %} - 會員登入{% endblock %} {% block style %}
 <style>
     .rwd {
         margin: 14vh auto 7vh;
@@ -10,36 +10,36 @@
         border-radius: 20px;
         box-shadow: 0px 0px 10px #555;
     }
-
+    
     .welcome-text {
         margin-top: 20px;
         text-align: center;
         color: rgb(38, 62, 133);
     }
-
+    
     .welcome-text p {
         font-size: 20px;
         font-weight: bold;
     }
-
+    
     .input-border {
         border: #aaa solid 1px;
         border-radius: 5px;
     }
-
+    
     .login {
         display: block;
     }
-
+    
     #registered-div {
         display: none;
         z-index: 2;
     }
-
+    
     .input-name {
         width: 49%;
     }
-
+    
     .green-btn {
         margin: 20px 0px;
         width: fit-content;
@@ -47,35 +47,109 @@
         border-radius: 5px;
         line-height: 35px;
     }
-
+    
     .w-33 {
         width: 33%;
     }
-
+    
     .gender label {
         position: relative;
     }
-
+    
     .gender input {
         position: absolute;
     }
-
+    
     input.valid {
         border-color: green;
     }
-
+    
     input.invalid {
         border-color: red;
     }
+    /* todo 報錯css 
+    */
+    
+    .msg {}
 </style>
-{% endblock %} {% block script %}
+{% endblock %} {% block script %} {% endblock %} {% block alert %}{% endblock %} {% block content %}
+<div class="container rwd d-flex flex-column">
+    <div class="welcome-text d-flex flex-column">
+        <h1>WoW Travel</h1>
+        <p>專屬於您的旅遊網站</p>
+    </div>
+
+    <!-- 登入表單 -->
+    <form class="login d-flex flex-column align-items-center" action="{{url_for('verify')}}" method="POST">
+        <input class="login input-border mb-3 p-2 col-md-8" type="email" name="email" placeholder="電子郵件" pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
+        <input class="login input-border mb-3 p-2 col-md-8" type="password" name="password" placeholder="密碼" pattern="^.*(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
+        <input class="login input-border mb-3 p-2 btn btn-primary col-md-8" type="submit" name="submit" value="登入">
+        <!-- todo 忘記密碼 寄信給用戶一組新密碼(資料庫會把用戶密碼重設) 待使用者登入後需更改密碼 -->
+        <a class="login mb-3 text-decoration-none" href="#">忘記密碼？</a>
+        <hr class="login m-0 w-75" />
+    </form>
+    <button class="login green-btn w-50 btn btn-success text-white align-self-center" id="registered-btn">建立新帳號</button>
+
+    <!-- 註冊表單 -->
+    <div id="registered-div">
+        <div class="d-flex flex-column">
+            <div class="d-flex justify-content-between">
+                <h4 class="pl-3 font-weight-bold">註冊</h4>
+                <span class="my-auto pr-2" id="close"><i class="fas fa-times"></i></span>
+            </div>
+
+            <hr class="m-0 w-100" />
+        </div>
+        <form class="d-flex flex-column" name="registration_form" action="{{url_for('create')}}" method="POST" onsubmit="return verify();">
+            <div class="d-flex justify-content-between my-3">
+                <input class="input-name input-border p-2" type="text" name="last_name" id="last_name" placeholder="姓氏" pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文，不能中英混雜" required>
+                <input class="input-name input-border p-2" type="text" name="first_name" id="first_name" placeholder="名字" pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文，不能中英混雜" required>
+            </div>
+
+            <input class="input-border mb-3 p-2" type="email" name="email" id="email" placeholder="電子郵件" pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
+            <input class="input-border mb-3 p-2" type="password" name="password" id="password" placeholder="設定密碼" pattern="^(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
+
+            <div class="mt-1">出生日期</div>
+            <div class="d-flex">
+                <select class="input-border w-33 mb-2 p-2" name="birthday_year" id="birthday_year"></select>
+                <select class="input-border w-33 mx-2 mb-2 p-2" name="birthday_month" id="birthday_month"></select>
+                <select class="input-border w-33 mb-2 p-2" name="birthday_day" id="birthday_day"></select>
+            </div>
+
+            <div class="mt-1">性別</div>
+            <div class="d-flex">
+                <span class="d-flex justify-content-between align-items-center input-border w-33">
+                    <label class="ml-2 my-auto p-2" for="male">男性</label>
+                    <input class="gender mr-2" type="radio" name="gender" value="男性" id="male">
+                </span>
+                <span class="d-flex justify-content-between align-items-center input-border w-33 mx-2">
+                    <label class="ml-2 my-auto p-2" for="female">女性</label>
+                    <input class="gender mr-2" type="radio" name="gender" value="女性" id="female">
+                </span>
+                <span class="d-flex justify-content-between align-items-center input-border w-33">
+                    <label class="ml-2 my-auto p-2" for="other">其他</label>
+                    <input class="gender mr-2" type="radio" name="gender" value="其他" id="other" checked>
+                </span>
+            </div>
+            <button class="green-btn w-50 btn btn-success text-white align-self-center">註冊</button>
+        </form>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <span class="msg">{{ msg }}</span>
+</div>
+
 <script>
-    $(document).ready(function () {
-        // 註冊
-        // $('#registered-div').hide()
-        $('#registered-btn').click(function () {
-            $('#registered-div').css('display', 'block')
+    $(document).ready(function() {
+        // 登入註冊切換
+        $('#registered-btn').click(function() {
             $('.login').hide(300)
+            $('#registered-div').show()
+            $('.msg').text('')
+        })
+        $('#close').click(function() {
+            $('#registered-div').hide()
+            $('.login').show(350)
         })
 
         // Automatically create a dynamic date drop-down list
@@ -90,17 +164,21 @@
         }
         for (let i = 1; i <= 12; i++) {
             let txt = "<option value='" + (i) + "'>" + (i) + "月</option>"
-            if (i == this_month) { txt = "<option value='" + (i) + "' selected>" + (i) + "月</option>" }
+            if (i == this_month) {
+                txt = "<option value='" + (i) + "' selected>" + (i) + "月</option>"
+            }
             $('#birthday_month').append(txt)
         }
         for (let i = 1; i <= 31; i++) {
             let txt = "<option value='" + (i) + "'>" + (i) + "</option>"
-            if (i == date) { txt = "<option value='" + (i) + "' selected>" + (i) + "</option>" }
+            if (i == date) {
+                txt = "<option value='" + (i) + "' selected>" + (i) + "</option>"
+            }
             $('#birthday_day').append(txt)
         }
 
         // 日期隨月份生成 (閏月、大小月)
-        $('#birthday_month').click(function () {
+        $('#birthday_month').click(function() {
             let days;
 
             if ($('#birthday_month').val() == 2) {
@@ -158,7 +236,7 @@
         // 建立新帳號表單驗證
         let inputs = document.querySelectorAll('input')
         inputs.forEach(input => {
-            input.addEventListener('input', function () {
+            input.addEventListener('blur', function() {
                 if (input.checkValidity()) {
                     input.classList.add('valid')
                     input.classList.remove('invalid')
@@ -174,7 +252,7 @@
         var rule_CH = /^[\u4E00-\u9FA5]+$/
         var last_isEN, first_isEN = -1
 
-        $('#last_name').blur(function () {
+        $('#last_name').blur(function() {
             let last_name = $('#last_name').val()
             let first_name = $('#first_name').val()
 
@@ -206,7 +284,7 @@
                 $(this).css("border-color", "green")
             }
         })
-        $('#first_name').blur(function () {
+        $('#first_name').blur(function() {
             let last_name = $('#last_name').val()
             let first_name = $('#first_name').val()
 
@@ -241,7 +319,7 @@
         })
 
         // let rule_email = /^([A-za-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
-        // let rule_password = /^.*(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$/;
+        // let rule_password = /^(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$/;
 
         // $('#email').blur(function() {
         //     if (rule_email.test($(this).val())) {
@@ -255,9 +333,10 @@
         // })
 
         // 年月日三欄連動 (生日>今日)
-        var birthday, flag_month = 0, flag_day = 0
+        var birthday, flag_month = 0,
+            flag_day = 0
 
-        $('#birthday_year').blur(function () {
+        $('#birthday_year').blur(function() {
             $(this).css("border-color", "green")
             birthday = new Date($('#birthday_year').val(), $('#birthday_month').val() - 1, $('#birthday_day').val())
             if (birthday > today) {
@@ -273,7 +352,7 @@
             }
         });
 
-        $('#birthday_month').blur(function () {
+        $('#birthday_month').blur(function() {
             flag_month = 1
             birthday = new Date($('#birthday_year').val(), $('#birthday_month').val() - 1, $('#birthday_day').val())
             if (birthday > today) {
@@ -289,14 +368,11 @@
             }
         });
 
-        $('#birthday_day').blur(function () {
+        $('#birthday_day').blur(function() {
             flag_day = 1
             birthday = new Date($('#birthday_year').val(), $('#birthday_month').val() - 1, $('#birthday_day').val())
             if (birthday > today) {
                 $(this).css("border-color", "red")
-                if (flag_month == 1) {
-                    $('#birthday_month').css("border-color", "red")
-                }
             } else {
                 $(this).css("border-color", "green")
                 if (flag_month == 1) {
@@ -304,83 +380,19 @@
                 }
             }
         });
-
         // todo onsubmit="return(verify());
+        /*
 
-        // function verify() {
-        //     if ($('#last_name').val() == '') {
-        //         console.log('性別不能為空')
-        //         return false
-        //     }
-        //     return true
-        // }
+        function verify() {
+            if ($('.gender').prop('checked')) {
+
+                return true
+            }
+            return false
+        }
+        */
+
+
     });
 </script>
-{% endblock %} {% block alert %}{% endblock %} {% block content %}
-<div class="container rwd d-flex flex-column">
-    <div class="welcome-text d-flex flex-column">
-        <h1>WoW Travel</h1>
-        <p>專屬於您的旅遊網站</p>
-    </div>
-
-    <!-- 登入表單 -->
-    <form class="login d-flex flex-column align-items-center" action="{{url_for('verify')}}" method="POST">
-        <input class="login input-border mb-3 p-2 col-md-8" type="email" name="email" placeholder="電子郵件"
-            pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
-        <input class="login input-border mb-3 p-2 col-md-8" type="password" name="password" placeholder="密碼"
-            pattern="^.*(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
-        <input class="login input-border mb-3 p-2 btn btn-primary col-md-8" type="submit" name="submit" value="登入">
-        <!-- todo 忘記密碼 寄信給用戶一組新密碼(資料庫會把用戶密碼重設) 待使用者登入後需更改密碼 -->
-        <a class="login mb-3 text-decoration-none" href="#">忘記密碼？</a>
-        <hr class="login m-0 w-75" />
-    </form>
-    <button class="login green-btn btn btn-success text-white align-self-center " id="registered-btn">建立新帳號</button>
-
-    <!-- 註冊表單 -->
-    <div id="registered-div">
-        <div class="d-flex flex-column">
-            <h4 class="pl-3 font-weight-bold">註冊</h4>
-            <hr class="m-0 w-100" />
-        </div>
-
-        <form class="mb-3 d-flex flex-column" name="registration_form" action="{{url_for('create')}}" method="POST"
-            onsubmit="return(verify());">
-            <div class="d-flex justify-content-between my-3">
-                <input class="input-name input-border p-2" type="text" name="last_name" id="last_name" placeholder="姓氏"
-                    pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文，不能中英混雜" required>
-                <input class="input-name input-border p-2" type="text" name="first_name" id="first_name"
-                    placeholder="名字" pattern="^[\u4e00-\u9fa5]+$|^[a-zA-Z\s]+$" title="中文或英文，不能中英混雜" required>
-            </div>
-
-            <input class="input-border mb-3 p-2" type="email" name="email" id="email" placeholder="電子郵件"
-                pattern="^[A-za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$" required>
-            <input class="input-border mb-3 p-2" type="password" name="password" id="password" placeholder="設定密碼"
-                pattern="^.*(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
-
-            <div class="mt-1">出生日期</div>
-            <div class="d-flex">
-                <select class="input-border w-33 mb-2 p-2" name="birthday_year" id="birthday_year"></select>
-                <select class="input-border w-33 mx-2 mb-2 p-2" name="birthday_month" id="birthday_month"></select>
-                <select class="input-border w-33 mb-2 p-2" name="birthday_day" id="birthday_day"></select>
-            </div>
-
-            <div class="mt-1">性別</div>
-            <div class="d-flex">
-                <span class="d-flex justify-content-between align-items-center input-border w-33 mb-2">
-                    <label class="ml-2 my-auto p-2" for="male">男性</label>
-                    <input class="mr-2" type="radio" name="gender" value="男" id="male">
-                </span>
-                <span class="d-flex justify-content-between align-items-center input-border w-33 mx-2 mb-2">
-                    <label class="ml-2 my-auto p-2" for="female">女性</label>
-                    <input class="mr-2" type="radio" name="gender" value="女" id="female">
-                </span>
-                <span class="d-flex justify-content-between align-items-center input-border w-33 mb-2">
-                    <label class="ml-2 my-auto p-2" for="other">其他</label>
-                    <input class="mr-2" type="radio" name="gender" value="其他" id="other">
-                </span>
-            </div>
-            <button type="submit" class="green-btn w-50 align-self-center btn btn-success text-white">註冊</button>
-        </form>
-    </div>
-</div>
 {% endblock %}

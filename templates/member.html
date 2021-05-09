@@ -1,0 +1,104 @@
+{% extends "index.html" %} {% block title %} - 會員登入{% endblock %} {% block style %}
+<style>
+    .rwd {
+        margin: 14vh auto 7vh;
+        max-width: 500px;
+        min-width: 375px;
+        height: fit-content;
+        background-color: rgb(241, 241, 241);
+        border: rgb(38, 62, 133) solid 3px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px #555;
+    }
+    
+    .welcome-text {
+        margin-top: 20px;
+        text-align: center;
+        color: rgb(38, 62, 133);
+    }
+    
+    .welcome-text p {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .input-border {
+        border: #aaa solid 1px;
+        border-radius: 5px;
+    }
+    
+    label {
+        margin: 0;
+        line-height: 32px;
+    }
+    
+    .logout {
+        margin-bottom: 20px;
+        height: 50px;
+        border-radius: 5px;
+        line-height: 35px;
+    }
+    
+    input.valid {
+        border-color: green;
+    }
+    
+    input.invalid {
+        border-color: red;
+    }
+</style>
+{% endblock %} {% block script %} {% endblock %} {% block alert %}{% endblock %} {% block content %}
+<div class="container rwd d-flex flex-column">
+    <div class="welcome-text d-flex flex-column">
+        <h1>WoW Travel</h1>
+        <p>專屬於您的旅遊網站</p>
+    </div>
+    <div class="d-flex flex-column">
+        <div class="d-flex">
+            <h4 class="pl-3 font-weight-bold">會員設定</h4>
+        </div>
+
+        <hr class="m-0 w-100" />
+    </div>
+    <form class="d-flex flex-column" action="{{url_for('update')}}" method="POST">
+        <div class="my-4  d-flex">
+            <label class="col-4">姓名</label>
+            <input class="col-8 input-border" type="text" name="name" value="{{ row[1] }}" disabled>
+        </div>
+        <div class="mb-4 d-flex">
+            <label class="col-4">帳號</label>
+            <input class="col-8 input-border" type="email" name="email" value="{{ row[2] }}" disabled>
+        </div>
+        <div class="mb-4 d-flex">
+            <label class="col-4" for="password">密碼</label>
+            <input class="col-8 input-border" type="password" name="password" value="{{ row[3] }}" id="password" pattern="^(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
+        </div>
+        <div class="mb-4 d-flex">
+            <label class="col-4">生日</label>
+            <input class="col-8 input-border" value="{{ row[4] }}" id="birthday" disabled>
+        </div>
+        <div class="mb-4 d-flex">
+            <label class="col-4" for="gender">性別</label>
+            <input class="col-8 input-border" value="{{ row[6] }}" id="gender" disabled>
+        </div>
+        <button class="logout w-50 btn btn-danger text-white align-self-center">更改密碼</button>
+    </form>
+</div>
+<div class="d-flex justify-content-center">
+    <span class="msg">{{ msg }}</span>
+</div>
+<script>
+    let inputs = document.querySelectorAll('input')
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (input.checkValidity()) {
+                input.classList.add('valid')
+                input.classList.remove('invalid')
+            } else {
+                input.classList.remove('valid')
+                input.classList.add('invalid')
+            }
+        })
+    });
+</script>
+{% endblock %}

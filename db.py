@@ -1,12 +1,13 @@
 import sqlite3 as sql
 
+
 class DatebaseDriver(object):
     def __init__(self):
-        # Sharing a single SQLite connection in multiple threads 
-        self.con = sql.connect('database.db', check_same_thread = False)
+        # Sharing a single SQLite connection in multiple threads
+        self.con = sql.connect('database.db', check_same_thread=False)
         print('Opened database successfully')
         self.create_table()
-    
+
     def create_table(self):
         try:
             self.con.execute(
@@ -42,6 +43,7 @@ class DatebaseDriver(object):
                 "gender": row[6]
             })
         return members
+        # return cursor.fetchall()
 
     def insert_member_table(self, name, email, password, birthday, age, gender):
         cursor = self.con.execute(
@@ -58,41 +60,37 @@ class DatebaseDriver(object):
             """
             SELECT * FROM member 
             WHERE id = ?;
-            """,(id,)
+            """, (id,)
         )
-        for row in cursor:
-            return row
-        return None
+        return cursor.fetchone()
+
+    def get_member_by_login(self, email, password):
+        cursor = self.con.execute(
+            """
+            SELECT * FROM member
+            WHERE email = ? AND password = ?;
+            """, (email, password)
+        )
+        return cursor.fetchone()
 
     def is_member(self, email):
         cursor = self.con.execute(
             """
             SELECT * FROM member 
             WHERE email = ?;
-            """,(email,)
+            """, (email,)
         )
         for row in cursor:
             return True
         return False
 
-    def get_member_name_by_login(self, email, password):
-        cursor = self.con.execute(
-            """
-            SELECT name FROM member 
-            WHERE email = ? AND password = ?;
-            """,(email, password)
-        )
-        for row in cursor:
-            return row[0]
-        return None
-
     # 改密碼
     def update_member_password_by_login(self, new_password, email, old_password):
         cursor = self.con.execute(
             """
-            UPDATE member 
-            SET password = ?
+            UPDATE member SET password = ?
             WHERE email = ? AND password = ?;
-            """,(new_password, email, old_password)
+            """, (new_password, email, old_password)
         )
         self.con.commit()
+        return cursor.rowcount
