@@ -13,20 +13,19 @@ HTML + CSS + BootStrap + FontAwesome + JS + JQ + Flask + SQLite3
 5. 修正Nav我的行程去結帳路由<br>
 
 ## 模板
-1. index:
-{% block title %}
-{% block style %}
-{% block script %}
-{% block alert %}
-{% block content %}
-<br>
-2. list:
-{% block path %}
-{% block area %}
-{% block schedule_name %}
-{% block traffic %}
-{% block hotel %}
-{% block recommend %}
-{% block cost %}
-{% block reference %}
-{% block feature_explain %}
+1. index:<br>
+{% block title %}<br>
+{% block style %}<br>
+{% block script %}<br>
+{% block alert %}<br>
+{% block content %}<br>
+2. list:<br>
+{% block path %}<br>
+{% block area %}<br>
+{% block schedule_name %}<br>
+{% block traffic %}<br>
+{% block hotel %}<br>
+{% block recommend %}<br>
+{% block cost %}<br>
+{% block reference %}<br>
+{% block feature_explain %}<br>
