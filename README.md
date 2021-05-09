@@ -3,7 +3,7 @@
 HTML + CSS + BootStrap + FontAwesome + JS + JQ + Flask + SQLite3
 
 ## 使用流程
->首頁(index) -> 各國(jp) -> 結帳(jp-list) -> 登入(log-in)
+>首頁(index) -> 各國(jp) -> 結帳(jp-list) -> 註冊(create) -> 登入(log-in) -> 設定(member)
 
 ## 給各位辛苦的開發者 (待完成)
 1. 登入頁面log-in.html<br>
@@ -14,7 +14,6 @@ HTML + CSS + BootStrap + FontAwesome + JS + JQ + Flask + SQLite3
 
 ## 模板
 1. index:
->
 {% block title %}
 {% block style %}
 {% block script %}
@@ -22,7 +21,6 @@ HTML + CSS + BootStrap + FontAwesome + JS + JQ + Flask + SQLite3
 {% block content %}
 <br>
 2. list:
->
 {% block path %}
 {% block area %}
 {% block schedule_name %}
