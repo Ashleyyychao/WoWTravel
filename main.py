@@ -28,7 +28,7 @@ def log_in():
 
 @app.route('/member')
 def member():
-    if 'LoggedIn' in session:
+    if 'LoggedIn' in session and 'email' in session and 'password' in session:
         email = session['email']
         password = session['password']
         row = DB.get_member_by_login(email, password)[1]
@@ -48,6 +48,7 @@ def update():
                 new_password, email, old_password)
             if rowcount == 1:
                 password = new_password
+                session['password'] = password
                 msg = f"密碼已更改成功! 新密碼為：{new_password}"
             else:
                 password = old_password
