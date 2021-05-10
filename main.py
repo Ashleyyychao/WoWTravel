@@ -28,10 +28,11 @@ def log_in():
 
 @app.route('/member')
 def member():
-    if 'LoggedIn' in session:
+    if 'LoggedIn' in session and 'email' in session and 'password' in session:
         email = session['email']
         password = session['password']
-        row = DB.get_member_by_login(email, password)
+        row = DB.get_member_by_login(email, password)[1]
+        print(f"member在這裡!!!!!!!!! {session}{row}")
         return render_template('member.html', row=row)
     return redirect(url_for('log_in'))
 
@@ -48,13 +49,14 @@ def update():
                 new_password, email, old_password)
             if rowcount == 1:
                 password = new_password
+                session['password'] = password
                 msg = f"密碼已更改成功! 新密碼為：{new_password}"
             else:
                 password = old_password
                 msg = "更新失敗"
                 return redirect('member')
 
-            row = DB.get_member_by_login(email, password)
+            row = DB.get_member_by_login(email, password)[1]
             return render_template('member.html', row=row, msg=msg)
 
 
@@ -76,7 +78,7 @@ def verify():
     # todo 驗證帳密是否含有攻擊字元再執行SQL指令
     # Ex: "' or '1' = '1'"
 
-    member = DB.get_member_by_login(email, password)
+    member = DB.get_member_by_login(email, password)[1]
     if member is None:
         msg = "帳號密碼有誤，請重新輸入"
         return render_template('log-in.html', msg=msg)
@@ -117,7 +119,7 @@ def create():
         # todo 驗證表單資料是否正確再放入資料庫
         # todo 驗證帳密是否含有攻擊字元再執行SQL指令
 
-        is_member = DB.is_member(email)
+        is_member = DB.get_member_by_login(email, password)[0]
         if is_member:
             msg = "此信箱已被註冊過"
         else:

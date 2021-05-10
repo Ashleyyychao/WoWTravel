@@ -66,35 +66,24 @@ class DatebaseDriver(object):
         return cursor.fetchone()
 
     def get_member_by_login(self, email, password):
-        cursor = self.con.execute(
-            """
-            SELECT * FROM member
-            WHERE email = ? AND password = ?;
-            """, (email, password)
-        )
-        return cursor.fetchone()
-
-    def is_member(self, email):
+        # Email是否註冊過
         cursor = self.con.execute(
             """
             SELECT * FROM member 
             WHERE email = ?;
             """, (email,)
         )
+        # 是否登入成功
         for row in cursor:
-            return True
-        return False
+            cursor = self.con.execute(
+                """
+                SELECT * FROM member
+                WHERE email = ? AND password = ?;
+                """, (email, password)
+            )
 
-    def get_member_name_by_login(self, email, password):
-        cursor = self.con.execute(
-            """
-            SELECT name FROM member 
-            WHERE email = ? AND password = ?;
-            """,(email, password)
-        )
-        for row in cursor:
-            return row[0]
-        return None
+            return True, cursor.fetchone()
+        return False, cursor.fetchone()
 
     # 改密碼
     def update_member_password_by_login(self, new_password, email, old_password):
@@ -107,7 +96,6 @@ class DatebaseDriver(object):
         self.con.commit()
         return cursor.rowcount
 
-
     # 留言版
 
     def create_messenger(self):
@@ -117,8 +105,7 @@ class DatebaseDriver(object):
                 CREATE TABLE messenger(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     comment TEXT NOT NULL,
-                    messenger_name TEXT NOT NULL,
-                    
+                    messenger_name TEXT NOT NULL
                 );
                 """
             )
@@ -126,12 +113,12 @@ class DatebaseDriver(object):
         except Exception as e:
             print(e)
 
-    def insert_messenger_table(self, comment,messenger_name):
+    def insert_messenger_table(self, comment, messenger_name):
         cursor = self.con.execute(
             """
             INSERT INTO messenger(comment,messenger_name) 
             VALUES(?,?);
-            """, (comment,messenger_name))
+            """, (comment, messenger_name))
         self.con.commit()
         return cursor.lastrowid
 
@@ -155,7 +142,7 @@ class DatebaseDriver(object):
             messenger.append({
                 "id": row[0],
                 "comment": row[1],
-                "messenger_name":row[2]
+                "messenger_name": row[2]
             })
         return messenger
 
@@ -166,7 +153,7 @@ class DatebaseDriver(object):
             SET comment = ? ,messenger_name = ?
             WHERE id = ?;
             """,
-            (comment, messenger_name,id)
+            (comment, messenger_name, id)
         )
         self.conn.commit()
 
@@ -180,8 +167,3 @@ class DatebaseDriver(object):
             (id,),
         )
         self.conn.commit()
-
-   
-        
-
-
