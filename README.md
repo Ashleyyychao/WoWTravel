@@ -14,20 +14,25 @@
 5. 修正Nav我的行程去結帳路由<br>
 
 ## 模板
-    {% extends "index.html" %}
-    {% block title %}
-    {% block style %}
-    {% block script %}
-    {% block alert %}
-    {% block content %}
-
-    {% extends "list.html" %}
-    {% block path %}
-    {% block area %}
-    {% block schedule_name %}
-    {% block traffic %}
-    {% block hotel %}
-    {% block recommend %}
-    {% block cost %}
-    {% block reference %}
-    {% block feature_explain %}
+- Index
+```jinja
+{% extends "index.html" %}
+{% block title %}
+{% block style %}
+{% block script %}
+{% block alert %}
+{% block content %}
+```
+- List
+```jinja
+{% extends "list.html" %}
+{% block path %}
+{% block area %}
+{% block schedule_name %}
+{% block traffic %}
+{% block hotel %}
+{% block recommend %}
+{% block cost %}
+{% block reference %}
+{% block feature_explain %}
+```
