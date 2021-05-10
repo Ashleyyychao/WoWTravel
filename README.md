@@ -1,9 +1,9 @@
 # WoWTravel
->A Travel Website Project (Full Stack)
+>A Travel Website Project (Full Stack)<br>
 >HTML + CSS + BootStrap + FontAwesome + JS + JQ + Flask + SQLite3
 
 ## 使用流程
->首頁(index) -> 各國(jp) -> 結帳(jp-list)
+>首頁(index) -> 各國(jp) -> 結帳(jp-list)<br>
 >註冊(create) -> 登入(log-in) -> 設定(member) -> 留言(messenge)
 
 ## 給各位辛苦的開發者 (待完成)
