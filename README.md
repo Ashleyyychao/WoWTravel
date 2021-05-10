@@ -16,15 +16,18 @@
 ## 模板
 - Index
 ```jinja
+{% raw %}
 {% extends "index.html" %}
 {% block title %}
 {% block style %}
 {% block script %}
 {% block alert %}
 {% block content %}
+{% endraw %}
 ```
 - List
 ```jinja
+{% raw %}
 {% extends "list.html" %}
 {% block path %}
 {% block area %}
@@ -35,4 +38,5 @@
 {% block cost %}
 {% block reference %}
 {% block feature_explain %}
+{% endraw %}
 ```
