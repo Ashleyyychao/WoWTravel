@@ -4,6 +4,13 @@
 </style>
 {% endblock %}{% block script %}
 <script>
+    $(document).ready(function () {
+        $("button").click(function () {
+            $("active").remove();
+        });
+    });
+
+
 
 </script>
 {% block alert %}{% endblock %}
@@ -15,8 +22,7 @@
         <form action="{{url_for('add_messenger')}}" method="POST">
 
             <h3>旅客心得</h3>
-            <p>名稱:<input type="text" name="messenger_name"></p>
-            <textarea  type='text' cols="100" rows="5" placeholder="留個言吧..." name="comment"></textarea>
+            <textarea type='text' cols="100" rows="5" placeholder="留個言吧..." name="comment"></textarea>
             <p><input type="submit" value="送出"></p>
         </form>
     </div>
@@ -25,15 +31,21 @@
             <thead>
                 <td>id</td>
                 <td>comment</td>
-                <td>messenger_name</td>
-            </thead>  
-            
+                <td>email</td>
+            </thead>
+
             {% for row in rows %}
-            <tr >
-                <td >{{ row['id'] }}<button>del</button></td>
+            <tr class='active'>
+                <td>{{ row['id'] }}
+                    <form action="{{url_for('delete_messenger')}}" method="POST">
+                        <button name="button" value="{{ row['id'] }}" >del</button>
+                    </form>
+                </td>
                 <td>{{ row['comment'] }}</td>
-                <td>{{ row['messenger_name'] }}</td>
-    
+                <td>{{ row['email'] }}</td>
+                <td>{{ row['member_id'] }}</td>
+
+
             </tr>
             {% endfor %}
         </table>

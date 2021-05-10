@@ -31,7 +31,7 @@ def member():
     if 'LoggedIn' in session:
         email = session['email']
         password = session['password']
-        row = DB.get_member_by_login(email, password)
+        row = DB.get_member_by_login(email, password)[1]
         return render_template('member.html', row=row)
     return redirect(url_for('log_in'))
 
@@ -54,7 +54,7 @@ def update():
                 msg = "更新失敗"
                 return redirect('member')
 
-            row = DB.get_member_by_login(email, password)
+            row = DB.get_member_by_login(email, password)[1]
             return render_template('member.html', row=row, msg=msg)
 
 
@@ -76,7 +76,7 @@ def verify():
     # todo 驗證帳密是否含有攻擊字元再執行SQL指令
     # Ex: "' or '1' = '1'"
 
-    member = DB.get_member_by_login(email, password)
+    member = DB.get_member_by_login(email, password)[1]
     if member is None:
         msg = "帳號密碼有誤，請重新輸入"
         return render_template('log-in.html', msg=msg)
@@ -117,7 +117,7 @@ def create():
         # todo 驗證表單資料是否正確再放入資料庫
         # todo 驗證帳密是否含有攻擊字元再執行SQL指令
 
-        is_member = DB.is_member(email)
+        is_member = DB.get_member_by_login(email, password)[0]
         if is_member:
             msg = "此信箱已被註冊過"
         else:
@@ -150,11 +150,18 @@ def jp_messenger():
 @app.route('/messenger', methods=['POST'])
 def add_messenger():
     if request.method == 'POST':
-
         comment = request.form['comment']
-        messenger_name=request.form['messenger_name']
+        email=session['email']
+        password = session['password']
+        print(email,password)
 
-        messenger_id = DB.insert_messenger_table(comment,messenger_name)
+        member = DB.get_member_by_login(email, password)[1]
+        print(member)
+        member_id = member[0]
+        print(member_id)
+
+
+        messenger_id = DB.insert_messenger_table(comment,email,member_id)
         messenger = DB.get_messenger_by_id(messenger_id)
         rows = DB.get_all_messenger()
 
@@ -165,8 +172,8 @@ def add_messenger():
 # def update_messenger(task_id):
 #    body = json.loads(request.data)
 #    comment = body["comment"]
-#    messenger_name = body["messenger_name"]
-#    DB.update_messenger_by_id(task_id, comment, messenger_name)
+#    email = body["email"]
+#    DB.update_messenger_by_id(task_id, comment, email)
 #    task = DB.get_messenger_by_id(task_id)
 #    rows = DB.get_all_messenger()
 #    if task is None:
@@ -174,8 +181,13 @@ def add_messenger():
 #    return render_template('messenger.html',rows=rows)
 
 #刪除特定任務
-@app.route("/messenger/<int:task_id>/", methods=["DELETE"])
-def delete_messenger(task_id):
-   if request.method == 'DELETE':
-        DB.delete_messenger_by_id(task_id)
-   return render_template('messenger.html',rows=rows)
+@app.route("/messenger", methods=["POST"])
+def delete_messenger():
+    print("1111111111111111111111")
+    if request.method == 'POST':
+        messenger_id = request.form["button"]
+        print(messenger_id)
+        DB.delete_messenger_by_id(messenger_id)
+        print("success")
+    rows = DB.get_all_messenger()
+    return render_template('messenger.html',rows=rows)
