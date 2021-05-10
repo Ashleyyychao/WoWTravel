@@ -62,26 +62,29 @@
     </div>
     <form class="d-flex flex-column" action="{{url_for('update')}}" method="POST">
         <div class="my-4  d-flex">
-            <label class="col-4">姓名</label>
-            <input class="col-8 input-border" type="text" name="name" value="{{ row[1] }}" disabled>
+            <label class="col-4 pl-0 d-flex justify-content-center">姓名</label>
+            <input class="col-6 input-border" type="text" name="name" value="{{ row[1] }}" disabled>
         </div>
         <div class="mb-4 d-flex">
-            <label class="col-4">帳號</label>
-            <input class="col-8 input-border" type="email" name="email" value="{{ row[2] }}" disabled>
+            <label class="col-4 pl-0 d-flex justify-content-center">帳號</label>
+            <input class="col-6 input-border" type="email" name="email" value="{{ row[2] }}" disabled>
         </div>
         <div class="mb-4 d-flex">
-            <label class="col-4" for="password">密碼</label>
-            <input class="col-8 input-border" type="password" name="password" value="{{ row[3] }}" id="password" pattern="^(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
+            <label class="col-4 pl-0 d-flex justify-content-center" for="password">密碼</label>
+            <input class="col-6 input-border" type="password" name="password" value="{{ row[3] }}" id="password" pattern="^(?=.{6,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[\W]).*$" title="密碼長度須6碼以上，並至少包含一個大寫、小寫字母和數字，不能使用特殊符號" required>
+            <input class="ml-3" type="submit" value="變更">
         </div>
         <div class="mb-4 d-flex">
-            <label class="col-4">生日</label>
-            <input class="col-8 input-border" value="{{ row[4] }}" id="birthday" disabled>
+            <label class="col-4 pl-0 d-flex justify-content-center">生日</label>
+            <input class="col-6 input-border" value="{{ row[4] }}" id="birthday" disabled>
         </div>
         <div class="mb-4 d-flex">
-            <label class="col-4" for="gender">性別</label>
-            <input class="col-8 input-border" value="{{ row[6] }}" id="gender" disabled>
+            <label class="col-4 pl-0 d-flex justify-content-center" for="gender">性別</label>
+            <input class="col-6 input-border" value="{{ row[6] }}" id="gender" disabled>
         </div>
-        <button class="logout w-50 btn btn-danger text-white align-self-center">更改密碼</button>
+    </form>
+    <form class="d-flex justify-content-center" action="{{url_for('log_out')}}" method="POST">
+        <button class="logout w-50 btn btn-danger text-white align-self-center">登出</button>
     </form>
 </div>
 <div class="d-flex justify-content-center">

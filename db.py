@@ -97,7 +97,7 @@ class DatebaseDriver(object):
         return cursor.rowcount
 
     # 留言版
-  
+
     def create_messenger(self):
         try:
             self.con.execute(
@@ -108,7 +108,6 @@ class DatebaseDriver(object):
                     email TEXT NOT NULL,
                     member_id INTEGER NOT NULL,
                     FOREIGN KEY (member_id) REFERENCES member(id)
-               
                 );
                 """
             )
@@ -116,12 +115,12 @@ class DatebaseDriver(object):
         except Exception as e:
             print(e)
 
-    def insert_messenger_table(self, comment, email,member_id):
+    def insert_messenger_table(self, comment, email, member_id):
         cursor = self.con.execute(
             """
             INSERT INTO messenger(comment,email,member_id) 
             VALUES(?,?,?);
-            """, (comment, email,member_id))
+            """, (comment, email, member_id))
         self.con.commit()
         return cursor.lastrowid
 
@@ -150,7 +149,7 @@ class DatebaseDriver(object):
         return messenger
 
     def update_messenger_by_id(self, id, comment, email):
-        self.conn.execute(
+        self.con.execute(
             """
             UPDATE messenger
             SET comment = ? ,email = ?
@@ -158,15 +157,15 @@ class DatebaseDriver(object):
             """,
             (comment, email, id)
         )
-        self.conn.commit()
+        self.con.commit()
 
     def delete_messenger_by_id(self, id):
 
-        self.conn.execute(
+        self.con.execute(
             """
             DELETE FROM messenger
             WHERE id = ?;
             """,
             (id,)
         )
-        self.conn.commit()
+        self.con.commit()
