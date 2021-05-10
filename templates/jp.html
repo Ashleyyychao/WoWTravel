@@ -66,109 +66,7 @@
         opacity: 1;
     }
 </style>
-{% endblock %} {% block script %}
-<script>
-    // 收藏鈕
-    var flag = 0;
-
-    function Favorites() {
-        if (flag % 2 == 0) {
-            document.getElementById("favorites").innerHTML = "已收藏";
-            document.getElementById("favorites").style.backgroundColor = "pink";
-        } else {
-            document.getElementById("favorites").innerHTML = "♡ 收藏";
-            document.getElementById("favorites").style.backgroundColor = "#dc3545";
-        }
-        flag++;
-    }
-
-    $(document).ready(function() {
-        // 計算行程總金額
-        var sum = 0;
-        var money = 0;
-
-        $(".add-to-cart").click(function() {
-            money = parseInt($(this).val());
-            var thousands = "";
-            var text = "";
-            var idNameArr = "";
-            var idName = "";
-
-            if ($(this).text() == "加入行程") {
-                $(this).text("✔ 已加入");
-                sum += money;
-                thousands = sum.toLocaleString();
-                $(".result").text(thousands);
-
-                idNameArr = $(this).parents(".card-body").find(".card-title").text().split(' ');
-                text = "<a id='" + idNameArr[idNameArr.length - 1] + "' class='dropdown-item'>" + $(this).parents(".card-body").find(".card-title").text() + " $" + money + "</a>";
-                $(".money").before(text);
-            } else if ($(this).text() == "✔ 已加入") {
-                $(this).text("加入行程");
-                sum -= money;
-                thousands = sum.toLocaleString();
-                $(".result").text(thousands);
-
-                idNameArr = $(this).parents(".card-body").find(".card-title").text().split(' ');
-                idName = "#" + idNameArr[idNameArr.length - 1];
-                $(idName).remove();
-            } else {
-                $(".result").text("有內鬼，終止交易！");
-            }
-        });
-
-        // 防止myCart 關閉
-        // $(".myCart").click(function() {
-        //     $('.myCartList').stopPropagation();
-        // });
-
-        // hashtag
-        $(".tag").click(function() {
-            var idName = $(this).attr("href");
-            $("html,body").animate({
-                scrollTop: $(idName).offset().top
-            }, 'slow');
-            return false;
-        });
-
-        // GoTop
-        // $("#goTop").click(function() {
-        //     $("html,body").animate({
-        //         scrollTop: 0
-        //     }, 'slow');
-        //     return false;
-        // });
-
-        // $(window).scroll(function() {
-        //     if ($(this).scrollTop() > 800) {
-        //         $('#goTop').fadeIn(500);
-        //     } else {
-        //         $('#goTop').fadeOut(500);
-        //     }
-        // });
-    });
-
-    //FadeIn & FadeOut
-    $(window).on("load", function() {
-        $(window).scroll(function() {
-            var windowBottom = $(this).scrollTop() + $(this).innerHeight();
-            $(".fade").each(function() {
-                var objectBottom = $(this).offset().top + $(this).outerHeight();
-
-                if (objectBottom < windowBottom) {
-                    if ($(this).css("opacity") == 0) {
-                        $(this).fadeTo(500, 1);
-                    }
-                } else {
-                    if ($(this).css("opacity") == 1) {
-                        $(this).fadeTo(500, 0);
-                    }
-                }
-            });
-        }).scroll(); //invoke scroll-handler on page-load
-    });
-</script>
-{% endblock %} {% block alert %}{% endblock %} {% block content %}
+{% endblock %} {% block script %} {% endblock %} {% block alert %}{% endblock %} {% block content %}
 <header class="d-flex justify-content-start">
     <div class="country pl-2 text-white">日本</div>
 </header>
@@ -612,4 +510,105 @@
         </div>
     </div>
 </section>
+<script>
+    // 收藏鈕
+    var flag = 0;
+
+    function Favorites() {
+        if (flag % 2 == 0) {
+            document.getElementById("favorites").innerHTML = "已收藏";
+            document.getElementById("favorites").style.backgroundColor = "pink";
+        } else {
+            document.getElementById("favorites").innerHTML = "♡ 收藏";
+            document.getElementById("favorites").style.backgroundColor = "#dc3545";
+        }
+        flag++;
+    }
+
+    $(document).ready(function() {
+        // 計算行程總金額
+        var sum = 0;
+        var money = 0;
+
+        $(".add-to-cart").click(function() {
+            money = parseInt($(this).val());
+            var thousands = "";
+            var text = "";
+            var idNameArr = "";
+            var idName = "";
+
+            if ($(this).text() == "加入行程") {
+                $(this).text("✔ 已加入");
+                sum += money;
+                thousands = sum.toLocaleString();
+                $(".result").text(thousands);
+
+                idNameArr = $(this).parents(".card-body").find(".card-title").text().split(' ');
+                text = "<a id='" + idNameArr[idNameArr.length - 1] + "' class='dropdown-item'>" + $(this).parents(".card-body").find(".card-title").text() + " $" + money + "</a>";
+                $(".money").before(text);
+            } else if ($(this).text() == "✔ 已加入") {
+                $(this).text("加入行程");
+                sum -= money;
+                thousands = sum.toLocaleString();
+                $(".result").text(thousands);
+
+                idNameArr = $(this).parents(".card-body").find(".card-title").text().split(' ');
+                idName = "#" + idNameArr[idNameArr.length - 1];
+                $(idName).remove();
+            } else {
+                $(".result").text("有內鬼，終止交易！");
+            }
+        });
+
+        // 防止myCart 關閉
+        // $(".myCart").click(function() {
+        //     $('.myCartList').stopPropagation();
+        // });
+
+        // hashtag
+        $(".tag").click(function() {
+            var idName = $(this).attr("href");
+            $("html,body").animate({
+                scrollTop: $(idName).offset().top
+            }, 'slow');
+            return false;
+        });
+
+        // GoTop
+        // $("#goTop").click(function() {
+        //     $("html,body").animate({
+        //         scrollTop: 0
+        //     }, 'slow');
+        //     return false;
+        // });
+
+        // $(window).scroll(function() {
+        //     if ($(this).scrollTop() > 800) {
+        //         $('#goTop').fadeIn(500);
+        //     } else {
+        //         $('#goTop').fadeOut(500);
+        //     }
+        // });
+    });
+
+    //FadeIn & FadeOut
+    $(window).on("load", function() {
+        $(window).scroll(function() {
+            var windowBottom = $(this).scrollTop() + $(this).innerHeight();
+            $(".fade").each(function() {
+                var objectBottom = $(this).offset().top + $(this).outerHeight();
+
+                if (objectBottom < windowBottom) {
+                    if ($(this).css("opacity") == 0) {
+                        $(this).fadeTo(500, 1);
+                    }
+                } else {
+                    if ($(this).css("opacity") == 1) {
+                        $(this).fadeTo(500, 0);
+                    }
+                }
+            });
+        }).scroll(); //invoke scroll-handler on page-load
+    });
+</script>
 {% endblock %}
