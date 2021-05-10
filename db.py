@@ -7,6 +7,7 @@ class DatebaseDriver(object):
         self.con = sql.connect('database.db', check_same_thread=False)
         print('Opened database successfully')
         self.create_table()
+        self.create_messenger()
 
     def create_table(self):
         try:
@@ -84,6 +85,17 @@ class DatebaseDriver(object):
             return True
         return False
 
+    def get_member_name_by_login(self, email, password):
+        cursor = self.con.execute(
+            """
+            SELECT name FROM member 
+            WHERE email = ? AND password = ?;
+            """,(email, password)
+        )
+        for row in cursor:
+            return row[0]
+        return None
+
     # 改密碼
     def update_member_password_by_login(self, new_password, email, old_password):
         cursor = self.con.execute(
@@ -94,3 +106,82 @@ class DatebaseDriver(object):
         )
         self.con.commit()
         return cursor.rowcount
+
+
+    # 留言版
+
+    def create_messenger(self):
+        try:
+            self.con.execute(
+                """
+                CREATE TABLE messenger(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    comment TEXT NOT NULL,
+                    messenger_name TEXT NOT NULL,
+                    
+                );
+                """
+            )
+            print('Table created successfully')
+        except Exception as e:
+            print(e)
+
+    def insert_messenger_table(self, comment,messenger_name):
+        cursor = self.con.execute(
+            """
+            INSERT INTO messenger(comment,messenger_name) 
+            VALUES(?,?);
+            """, (comment,messenger_name))
+        self.con.commit()
+        return cursor.lastrowid
+
+    def get_messenger_by_id(self, id):
+        cursor = self.con.execute(
+            """
+            SELECT * FROM messenger 
+            WHERE id = ?;
+            """, (id,)
+        )
+        for row in cursor:
+            return row
+        return None
+
+    def get_all_messenger(self):
+        cursor = self.con.execute(
+            "SELECT * FROM messenger ORDER BY id DESC;"
+        )
+        messenger = []
+        for row in cursor:
+            messenger.append({
+                "id": row[0],
+                "comment": row[1],
+                "messenger_name":row[2]
+            })
+        return messenger
+
+    def update_messenger_by_id(self, id, comment, messenger_name):
+        self.conn.execute(
+            """
+            UPDATE messenger
+            SET comment = ? ,messenger_name = ?
+            WHERE id = ?;
+            """,
+            (comment, messenger_name,id)
+        )
+        self.conn.commit()
+
+    def delete_messenger_by_id(self, id):
+
+        self.conn.execute(
+            """
+            DELETE FROM messenger
+            WHERE id = ?;
+            """,
+            (id,),
+        )
+        self.conn.commit()
+
+   
+        
+
+

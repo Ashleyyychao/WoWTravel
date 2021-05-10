@@ -139,3 +139,43 @@ def jp():
 @app.route('/jp-list')
 def jp_list():
     return render_template('jp-list.html')
+
+
+@app.route('/messenger')
+def jp_messenger():
+    rows = DB.get_all_messenger()
+    return render_template('messenger.html',rows=rows)
+
+
+@app.route('/messenger', methods=['POST'])
+def add_messenger():
+    if request.method == 'POST':
+
+        comment = request.form['comment']
+        messenger_name=request.form['messenger_name']
+
+        messenger_id = DB.insert_messenger_table(comment,messenger_name)
+        messenger = DB.get_messenger_by_id(messenger_id)
+        rows = DB.get_all_messenger()
+
+        return render_template('messenger.html',rows=rows)
+
+# #更新特定任務
+# @app.route("/messenger/<int:task_id>/", methods=["POST"])
+# def update_messenger(task_id):
+#    body = json.loads(request.data)
+#    comment = body["comment"]
+#    messenger_name = body["messenger_name"]
+#    DB.update_messenger_by_id(task_id, comment, messenger_name)
+#    task = DB.get_messenger_by_id(task_id)
+#    rows = DB.get_all_messenger()
+#    if task is None:
+#        return failure_response("更新失敗")
+#    return render_template('messenger.html',rows=rows)
+
+#刪除特定任務
+@app.route("/messenger/<int:task_id>/", methods=["DELETE"])
+def delete_messenger(task_id):
+   if request.method == 'DELETE':
+        DB.delete_messenger_by_id(task_id)
+   return render_template('messenger.html',rows=rows)

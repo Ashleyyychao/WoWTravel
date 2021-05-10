@@ -1,0 +1,43 @@
+{% extends "index.html" %} {% block title %}jp{% endblock %} {% block style %}
+<style>
+
+</style>
+{% endblock %}{% block script %}
+<script>
+
+</script>
+{% block alert %}{% endblock %}
+
+{% endblock %}{% block content %}
+
+<div class="container rwd d-flex flex-column p-5">
+    <div class='p-5'>
+        <form action="{{url_for('add_messenger')}}" method="POST">
+
+            <h3>旅客心得</h3>
+            <p>名稱:<input type="text" name="messenger_name"></p>
+            <textarea  type='text' cols="100" rows="5" placeholder="留個言吧..." name="comment"></textarea>
+            <p><input type="submit" value="送出"></p>
+        </form>
+    </div>
+    <div class='p-5'>
+        <table border=1>
+            <thead>
+                <td>id</td>
+                <td>comment</td>
+                <td>messenger_name</td>
+            </thead>  
+            
+            {% for row in rows %}
+            <tr >
+                <td >{{ row['id'] }}<button>del</button></td>
+                <td>{{ row['comment'] }}</td>
+                <td>{{ row['messenger_name'] }}</td>
+    
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
