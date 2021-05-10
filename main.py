@@ -154,12 +154,7 @@ def add_messenger():
             comment = request.form['comment']
             email = session['email']
             password = session['password']
-
-            member = DB.get_member_by_login(email, password)[1]
-            print(member)
-            member_id = member[0]
-            print(member_id)
-
+            member_id = DB.get_member_by_login(email, password)[1][0]
             messenger_id = DB.insert_messenger_table(comment, email, member_id)
             messenger = DB.get_messenger_by_id(messenger_id)
         else:
@@ -187,8 +182,18 @@ def add_messenger():
 @app.route("/delete-message", methods=["POST"])
 def delete_messenger():
     if request.method == 'POST':
-        messenger_id = request.form["button"]
-        print(messenger_id)
-        DB.delete_messenger_by_id(messenger_id)
+        if 'LoggedIn' in session:
+            email = session['email']
+            password = session['password']
+            member_id = DB.get_member_by_login(email, password)[1][0]
+
+            messenger_id = request.form["button"]
+            DB_member_id = DB.get_messenger_by_id(messenger_id)[3]
+            if member_id == DB_member_id:
+                DB.delete_messenger_by_id(messenger_id)
+            else:
+                print("別想亂刪人家留言")
+        else:
+            print("請先登入才能刪除留言")
     rows = DB.get_all_messenger()
     return render_template('messenger.html', rows=rows)
