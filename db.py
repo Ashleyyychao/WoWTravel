@@ -7,7 +7,7 @@ class DatebaseDriver(object):
         self.con = sql.connect('database.db', check_same_thread=False)
         print('Opened database successfully')
         self.create_table()
-        self.create_messenger()
+        self.create_message()
 
     def create_table(self):
         try:
@@ -85,7 +85,6 @@ class DatebaseDriver(object):
             return True, cursor.fetchone()
         return False, cursor.fetchone()
 
-    # 改密碼
     def update_member_password_by_login(self, new_password, email, old_password):
         cursor = self.con.execute(
             """
@@ -97,15 +96,14 @@ class DatebaseDriver(object):
         return cursor.rowcount
 
     # 留言版
-
-    def create_messenger(self):
+    def create_message(self):
         try:
             self.con.execute(
                 """
-                CREATE TABLE messenger(
+                CREATE TABLE message(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    comment TEXT NOT NULL,
                     email TEXT NOT NULL,
+                    comment TEXT NOT NULL,
                     member_id INTEGER NOT NULL,
                     FOREIGN KEY (member_id) REFERENCES member(id)
                 );
@@ -115,19 +113,19 @@ class DatebaseDriver(object):
         except Exception as e:
             print(e)
 
-    def insert_messenger_table(self, comment, email, member_id):
+    def insert_message_table(self, email, comment, member_id):
         cursor = self.con.execute(
             """
-            INSERT INTO messenger(comment,email,member_id) 
+            INSERT INTO message(email, comment, member_id) 
             VALUES(?,?,?);
-            """, (comment, email, member_id))
+            """, (email, comment, member_id))
         self.con.commit()
         return cursor.lastrowid
 
-    def get_messenger_by_id(self, id):
+    def get_message_by_id(self, id):
         cursor = self.con.execute(
             """
-            SELECT * FROM messenger 
+            SELECT * FROM message 
             WHERE id = ?;
             """, (id,)
         )
@@ -135,35 +133,53 @@ class DatebaseDriver(object):
             return row
         return None
 
-    def get_all_messenger(self):
+    def get_all_messages(self):
         cursor = self.con.execute(
-            "SELECT * FROM messenger ORDER BY id DESC;"
+            "SELECT * FROM message ORDER BY id DESC;"
         )
-        messenger = []
+        message = []
         for row in cursor:
-            messenger.append({
+            message.append({
                 "id": row[0],
-                "comment": row[1],
-                "email": row[2]
+                "email": row[1],
+                "comment": row[2]
             })
-        return messenger
+        return message
 
-    def update_messenger_by_id(self, id, comment, email):
+    # page:第幾頁 n:一頁幾筆
+    def get_message_by_page(self, page, n):
+        cursor = self.con.execute(
+            """
+            SELECT * FROM message
+            ORDER BY id DESC
+            LIMIT ?, ?;
+            """, (page, n)
+        )
+        message = []
+        for row in cursor:
+            message.append({
+                "id": row[0],
+                "email": row[1],
+                "comment": row[2]
+            })
+        return message
+
+    def update_message_by_id(self, id, email, comment):
         self.con.execute(
             """
-            UPDATE messenger
-            SET comment = ? ,email = ?
+            UPDATE message
+            SET email = ?, comment = ? 
             WHERE id = ?;
             """,
-            (comment, email, id)
+            (email, comment, id)
         )
         self.con.commit()
 
-    def delete_messenger_by_id(self, id):
+    def delete_message_by_id(self, id):
 
         self.con.execute(
             """
-            DELETE FROM messenger
+            DELETE FROM message
             WHERE id = ?;
             """,
             (id,)

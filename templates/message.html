@@ -1,0 +1,138 @@
+{% extends "index.html" %} {% block title %} - 旅客評論{% endblock %} {% block style %}
+<style>
+    main {
+        margin-top: 7vh;
+    }
+    
+    #board {
+        background-color: #eee;
+        border-radius: 5px;
+    }
+    
+    .title {
+        font-weight: bolder;
+        color: rgb(38, 62, 133);
+    }
+    
+    textarea {
+        border-radius: 20px;
+        outline: none;
+        resize: none;
+        padding: 10px 0px 0px 20px;
+        transition: all .7s 0s ease;
+    }
+    
+    textarea:focus {
+        box-shadow: 0px 0px 10px #db4961;
+    }
+    
+    .wow-color {
+        color: rgb(38, 62, 133);
+    }
+    
+    .message {
+        background: #fff;
+        margin: 10px 0px;
+        padding: 5px 5px 5px 10px;
+        border-radius: 10px;
+        border: 1px solid pink;
+    }
+    
+    .card {
+        border: 1px solid pink;
+    }
+    
+    .card-title {
+        font-weight: bolder;
+        color: #db4961;
+    }
+    
+    .card-text {
+        height: 60px;
+    }
+    
+    .btn-link {
+        background-color: #db4961;
+        color: #ffffff;
+        transition: all .7s 0s ease;
+    }
+    
+    .btn-link:hover {
+        background-color: #ffb8c6;
+        color: #db4961;
+    }
+</style>
+{% endblock %}{% block script %} {% block alert %}{% endblock %} {% endblock %}{% block content %}
+
+<main class="d-flex flex-column font-weight-bolder">
+    <div class="card text-white" style="border: 0px;">
+        <div class="card-img" style="width: 100%; height: 250px; background: rgba(0, 0, 0, .5) url('../static/image/message/淺草雷門.jpg') no-repeat center; background-size: cover; background-blend-mode: multiply;">
+        </div>
+        <div class="card-img-overlay d-flex flex-column justify-content-center font-weight-bolder">
+            <h3 class="card-title">淺草雷門</h3>
+            <p class="card-text">夜晚寧靜的淺草寺，一排排的燈籠閃著迷人的光暈，令人陶醉其中。</p>
+        </div>
+    </div>
+    <div id="board" class="container mt-5 my-2 d-flex flex-column">
+        <h3 class="my-3 ml-2 title">旅客評價</h3>
+        <div class="my-4 px-5">
+            <form class="d-flex flex-column" action="{{url_for('add_message')}}" method="POST" onsubmit="return verify();">
+                <textarea class="col-12" type='text' name="comment" rows="3" placeholder="留個言吧..." title="字數限制100" maxlength="150"></textarea>
+                <button class="send mt-4 w-50 btn btn-link text-decoration-none text-white align-self-center">送出</button>
+            </form>
+        </div>
+        <hr class="my-3 w-100" />
+        <div class="px-5">
+            {% for row in rows %}
+            <div class="d-flex">
+                <div class="floor wow-color">{{ row['id'] }}樓</div>
+                <div class="mail ml-3 wow-color">{{ row['email'] }}</div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center ">
+                <div class="message mr-3 col-11">
+                    <div class="comment">{{ row['comment'] }}</div>
+                </div>
+                <form action="{{url_for('delete_message')}}" method="POST">
+                    <button class="del-btn btn-link text-decoration-none w-100" name="button" value="{{ row['id'] }}">del</button>
+                </form>
+            </div>
+            <hr class="my-3 w-100" /> {% endfor %}
+        </div>
+    </div>
+    <div class="mb-1 d-flex justify-content-center">
+        {% for i in range(pages) %}
+        <a class="page m-2 text-decoration-none" href="">{{i+1}}</a> {% endfor %}
+    </div>
+</main>
+<script>
+    /* todo 留言限制 */
+    function verify() {
+        $this = $('textarea')
+        if ($this.val().length == 0)
+            return false
+
+        return true
+    }
+
+    /* todo 留言時間 */
+    $(document).ready(function() {
+        /* todo 留言頁數 */
+        $('.page').click(function() {
+            event.preventDefault()
+            let page = $(this).text()
+            console.log(page)
+            $.ajax({
+                url: "{{url_for('message')}}",
+                type: 'POST',
+                data: page,
+                error: function(xhr) {
+                    console.log("Failed");
+                },
+                success: function(response) {
+                    console.log("Success");
+                }
+            })
+        })
+    })
+</script>
+{% endblock %}

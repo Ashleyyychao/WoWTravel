@@ -3,6 +3,7 @@ import sqlite3 as sql
 import json
 import os
 import time
+import math
 # db.py
 import db
 
@@ -141,59 +142,62 @@ def jp_list():
     return render_template('jp-list.html')
 
 
-@app.route('/messenger')
-def jp_messenger():
-    rows = DB.get_all_messenger()
-    return render_template('messenger.html', rows=rows)
+@app.route('/message', methods=['GET', 'POST'])
+def message():
+    n = 5
+    rows = DB.get_all_messages()
+    pages = math.ceil(len(rows) / n)
+
+    page = 1
+    if request.method == 'POST':
+        page = int(request.args.get['page'])
+        print(f"page在這裡!!!!!!!!!!!!{page}")
+    page = n * (page - 1)
+    rows = DB.get_message_by_page(page, n)
+    return render_template('message.html', rows=rows, pages=pages)
 
 
-@app.route('/messenger', methods=['POST'])
-def add_messenger():
+@app.route('/add-message', methods=['POST'])
+def add_message():
     if request.method == 'POST':
         if 'LoggedIn' in session:
             comment = request.form['comment']
             email = session['email']
             password = session['password']
             member_id = DB.get_member_by_login(email, password)[1][0]
-            messenger_id = DB.insert_messenger_table(comment, email, member_id)
-            messenger = DB.get_messenger_by_id(messenger_id)
+            message_id = DB.insert_message_table(email, comment, member_id)
+            message = DB.get_message_by_id(message_id)
         else:
             print("請先登入才能留言")
+    return redirect(url_for('message'))
 
-        rows = DB.get_all_messenger()
-        return render_template('messenger.html', rows=rows)
-
-# #更新特定任務
-# @app.route("/messenger/<int:task_id>/", methods=["POST"])
-# def update_messenger(task_id):
-#    body = json.loads(request.data)
-#    comment = body["comment"]
-#    email = body["email"]
-#    DB.update_messenger_by_id(task_id, comment, email)
-#    task = DB.get_messenger_by_id(task_id)
-#    rows = DB.get_all_messenger()
-#    if task is None:
-#        return failure_response("更新失敗")
-#    return render_template('messenger.html',rows=rows)
-
-# 刪除特定任務
+# 測試用
+# @app.route('/add-message', methods=['POST'])
+# def add_message():
+#     if request.method == 'POST':
+#         comment = request.form['comment']
+#         email = "test@gmail.com"
+#         password = "Abc123"
+#         member_id = DB.get_member_by_login(email, password)[1][0]
+#         message_id = DB.insert_message_table(email, comment, member_id)
+#         message = DB.get_message_by_id(message_id)
+#     return redirect(url_for('message'))
 
 
 @app.route("/delete-message", methods=["POST"])
-def delete_messenger():
+def delete_message():
     if request.method == 'POST':
         if 'LoggedIn' in session:
             email = session['email']
             password = session['password']
             member_id = DB.get_member_by_login(email, password)[1][0]
 
-            messenger_id = request.form["button"]
-            DB_member_id = DB.get_messenger_by_id(messenger_id)[3]
+            message_id = request.form["button"]
+            DB_member_id = DB.get_message_by_id(message_id)[3]
             if member_id == DB_member_id:
-                DB.delete_messenger_by_id(messenger_id)
+                DB.delete_message_by_id(message_id)
             else:
                 print("別想亂刪人家留言")
         else:
             print("請先登入才能刪除留言")
-    rows = DB.get_all_messenger()
-    return render_template('messenger.html', rows=rows)
+    return redirect(url_for('message'))
