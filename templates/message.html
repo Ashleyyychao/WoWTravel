@@ -54,12 +54,14 @@
     .btn-link {
         background-color: #db4961;
         color: #ffffff;
-        transition: all .7s 0s ease;
+        text-decoration: none;
+        transition: background-color .7s 0s ease, color .7s 0s ease;
     }
     
     .btn-link:hover {
         background-color: #ffb8c6;
         color: #db4961;
+        text-decoration: none;
     }
 </style>
 {% endblock %}{% block script %} {% block alert %}{% endblock %} {% endblock %}{% block content %}
@@ -75,77 +77,117 @@
     </div>
     <div id="board" class="container mt-5 my-2 d-flex flex-column">
         <h3 class="my-3 ml-2 title">旅客評價</h3>
-        <div class="my-4 px-5">
-            <form class="d-flex flex-column" action="{{url_for('add_message')}}" method="POST" onsubmit="return verify();">
-                <textarea class="col-12" type='text' name="comment" rows="3" placeholder="留個言吧..." title="字數限制100" maxlength="150"></textarea>
-                <button class="send mt-4 w-50 btn btn-link text-decoration-none text-white align-self-center">送出</button>
-            </form>
+        <div class="my-4 px-5 d-flex flex-column">
+            <textarea class="col-12" type='text' rows="3" placeholder="留個言吧..." title="字數限制100" maxlength="150"></textarea>
+            <button class="send mt-4 w-50 btn btn-link align-self-center">送出</button>
         </div>
         <hr class="my-3 w-100" />
         <div class="px-5">
             {% for row in rows %}
-            <div class="d-flex">
-                <div class="floor wow-color">{{ row['id'] }}樓</div>
-                <div class="mail ml-3 wow-color">{{ row['email'] }}</div>
+            <div class='msg d-flex'>
+                <div class='msg wow-color'>{{ row['id'] }}樓</div>
+                <div class='msg ml-3 wow-color'>{{ row['email'] }}</div>
             </div>
-            <div class="d-flex justify-content-center align-items-center ">
-                <div class="message mr-3 col-11">
-                    <div class="comment">{{ row['comment'] }}</div>
+            <div class='msg d-flex justify-content-center align-items-center'>
+                <div class='msg message mr-3 col-11'>
+                    <div class='msg'>{{ row['comment'] }}</div>
                 </div>
-                <form action="{{url_for('delete_message')}}" method="POST">
-                    <button class="del-btn btn-link text-decoration-none w-100" name="button" value="{{ row['id'] }}">del</button>
-                </form>
+                <button class='del-btn btn-link w-100' value='{{ row[ "id" ] }}'>del</button>
             </div>
-            <hr class="my-3 w-100" /> {% endfor %}
+            <hr class='my-3 w-100' /> {% endfor %}
         </div>
     </div>
-    <div class="mb-1 d-flex justify-content-center">
+    <div class="pages-div mb-1 d-flex justify-content-center">
         {% for i in range(pages) %}
-        <a class="page m-2 text-decoration-none" href="">{{i+1}}</a> {% endfor %}
+        <a class='page m-2 text-decoration-none' href=''>{{i+1}}</a> {% endfor %}
     </div>
 </main>
 <script>
-    /* todo 留言限制 */
-    function verify() {
-        $this = $('textarea')
-        if ($this.val().length == 0)
-            return false
-
-        return true
-    }
-
     /* todo 留言時間 */
     $(document).ready(function() {
-        /* todo 留言頁數 */
-        $('.page').click(function() {
-            event.preventDefault()
-            let page = $(this).text()
-            var params = {
+        // 取得留言
+        function get_msg(page) {
+            let params = {
                 "page": page
             }
             $.ajax({
-                url: "{{url_for('ajax')}}",
+                url: "{{url_for('get_messages')}}",
                 type: 'POST',
                 data: JSON.stringify(params),
                 dataType: 'json',
                 contentType: "application/json",
                 error: function(xhr, status, error) {
-                    console.log("Failed");
                     console.log(error);
                 },
                 success: function(response) {
-                    console.log(response);
+                    console.log(response)
                     $('#board > div:nth-child(4)').text('')
-                    for (var i = 0; i < response.length; i++) {
-                        $('#board > div:nth-child(4)').append("<div class='d-flex'><div class='floor wow-color'>" +
-                            response[i]['id'] + "樓</div><div class='mail ml-3 wow-color'>" +
-                            response[i]['email'] + "</div></div><div class='d-flex justify-content-center align-items-center'><div class='message mr-3 col-11'><div class='comment'>" +
-                            response[i]['comment'] + "</div></div><form action='{{url_for('delete_message')}}' method='POST'><button class='del-btn btn-link text-decoration-none w-100' name='button value='" +
-                            response[i]['id'] + "'>del</button></form></div><hr class='my-3 w-100' />")
+                    $('.page').remove()
+                    for (let i = 0; i < response['rows'].length; i++) {
+                        $('#board > div:nth-child(4)').append("<div class='msg d-flex'><div class='msg wow-color'>" +
+                            response['rows'][i]['id'] + "樓</div><div class='msg ml-3 wow-color'>" +
+                            response['rows'][i]['email'] + "</div></div><div class='msg d-flex justify-content-center align-items-center'><div class='msg message mr-3 col-11'><div class='msg'>" +
+                            response['rows'][i]['comment'] + "</div></div><button class='del-btn btn-link w-100' value='" +
+                            response['rows'][i]['id'] + "'>del</button></div><hr class='my-3 w-100' />")
+                    }
+                    for (let i = 0; i < response['pages']; i++) {
+                        $('.pages-div').append("<a class='page m-2 text-decoration-none' href=''>" + (i + 1) + "</a>")
                     }
                 }
             })
-        })
+        };
+        // 發送留言
+        $('.send').click(function() {
+            let comment = $('textarea').val()
+            let params = {
+                "comment": comment
+            };
+            // 留言限制
+            if (comment != "") {
+                $.ajax({
+                    url: "/ajax/add_msg",
+                    type: 'POST',
+                    data: JSON.stringify(params),
+                    dataType: 'json',
+                    contentType: "application/json",
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response['success']) {
+                            get_msg(1)
+                        }
+                    }
+                })
+            }
+        });
+        // 刪除留言 
+        $(document).on('click', '.del-btn', function() {
+            let element = $(this)
+            let id = element.val()
+            console.log(id)
+            $.ajax({
+                url: "/ajax/del_msg/" + id,
+                type: 'DELETE',
+                error: function(xhr, status, error) {
+                    console.log(error);
+                },
+                success: function(response) {
+                    console.log(response)
+                    if (response['success']) {
+                        element.parents('.msg').fadeOut()
+                        get_msg(1)
+                    }
+                }
+            })
+        });
+        // 留言板頁數
+        $(document).on('click', '.page', function(event) {
+            event.preventDefault()
+            let page = $(this).text()
+            get_msg(page)
+        });
     })
 </script>
 {% endblock %}

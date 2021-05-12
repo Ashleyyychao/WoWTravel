@@ -6,6 +6,7 @@ import time
 import math
 
 from flask.helpers import flash
+from flask.wrappers import Response
 # db.py
 import db
 
@@ -143,25 +144,6 @@ def jp():
 def jp_list():
     return render_template('jp-list.html')
 
-# Ajax route
-
-
-@app.route('/ajax', methods=['GET', 'POST'])
-def ajax():
-    if request.method == 'POST':
-        n = 5
-        rows = DB.get_all_messages()
-        pages = math.ceil(len(rows) / n)
-        page = int(request.json['page'])
-        page = (page - 1) * n
-        app.logger.info(page)
-        app.logger.info(f"page = {page}")
-        rows = DB.get_message_by_page(page, n)
-        app.logger.info(type(rows))
-        app.logger.info(f"rows = {rows}")
-        response = rows
-        return jsonify(response)
-
 
 @app.route('/message')
 def message():
@@ -171,48 +153,68 @@ def message():
     rows = DB.get_message_by_page(0, n)
     return render_template('message.html', rows=rows, pages=pages)
 
+# Ajax route
 
-@app.route('/add-message', methods=['POST'])
+
+@app.route('/ajax/get_msg', methods=['GET', 'POST'])
+def get_messages():
+    if request.method == 'POST':
+        n = 5
+        rows = DB.get_all_messages()
+        pages = math.ceil(len(rows) / n)
+        page = int(request.json['page'])
+        page = (page - 1) * n
+        rows = DB.get_message_by_page(page, n)
+        response = {
+            "rows": rows,
+            "pages": pages
+        }
+        return jsonify(response)
+
+
+@app.route('/ajax/add_msg', methods=['POST'])
 def add_message():
     if request.method == 'POST':
+        response = {
+            "success": False,
+            "msg": "錯誤"
+        }
         if 'LoggedIn' in session:
-            comment = request.form['comment']
+            comment = request.json['comment']
             email = session['email']
             password = session['password']
             member_id = DB.get_member_by_login(email, password)[1][0]
             message_id = DB.insert_message_table(email, comment, member_id)
             message = DB.get_message_by_id(message_id)
+            response["success"] = True
+            response["msg"] = "留言成功"
         else:
-            print("請先登入才能留言")
-    return redirect(url_for('message'))
+            response["msg"] = "請先登入才能留言"
 
-# 測試用
-# @app.route('/add-message', methods=['POST'])
-# def add_message():
-#     if request.method == 'POST':
-#         comment = request.form['comment']
-#         email = "test@gmail.com"
-#         password = "Abc123"
-#         member_id = DB.get_member_by_login(email, password)[1][0]
-#         message_id = DB.insert_message_table(email, comment, member_id)
-#         message = DB.get_message_by_id(message_id)
-#     return redirect(url_for('message'))
+    return jsonify(response)
 
 
-@app.route("/delete-message", methods=["POST"])
-def delete_message():
-    if request.method == 'POST':
+@app.route('/ajax/del_msg/<int:msg_id>', methods=['DELETE'])
+def del_msg(msg_id):
+    if request.method == 'DELETE':
+        response = {
+            "success": False,
+            "msg": "刪除失敗"
+        }
         if 'LoggedIn' in session:
             email = session['email']
             password = session['password']
             member_id = DB.get_member_by_login(email, password)[1][0]
+            DB_member_id = DB.get_message_by_id(msg_id)[3]
 
-            message_id = request.form["button"]
-            DB_member_id = DB.get_message_by_id(message_id)[3]
             if member_id == DB_member_id:
-                DB.delete_message_by_id(message_id)
+                DB.delete_message_by_id(msg_id)
+                response["success"] = True
+                response["msg"] = "這則回應已被刪除"
             else:
-                print("別想亂刪人家留言")
+                response["msg"] = "無法刪除他人留言"
+                return jsonify(response)
         else:
-            print("請先登入才能刪除留言")
-    return redirect(url_for('message'))
+            response["msg"] = "請先登入才能刪除留言"
+            return jsonify(response)
+        return jsonify(response)
