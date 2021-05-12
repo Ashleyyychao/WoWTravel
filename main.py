@@ -4,6 +4,8 @@ import json
 import os
 import time
 import math
+
+from flask.helpers import flash
 # db.py
 import db
 
@@ -141,19 +143,32 @@ def jp():
 def jp_list():
     return render_template('jp-list.html')
 
+# Ajax route
 
-@app.route('/message', methods=['GET', 'POST'])
+
+@app.route('/ajax', methods=['GET', 'POST'])
+def ajax():
+    if request.method == 'POST':
+        n = 5
+        rows = DB.get_all_messages()
+        pages = math.ceil(len(rows) / n)
+        page = int(request.json['page'])
+        page = (page - 1) * n
+        app.logger.info(page)
+        app.logger.info(f"page = {page}")
+        rows = DB.get_message_by_page(page, n)
+        app.logger.info(type(rows))
+        app.logger.info(f"rows = {rows}")
+        response = rows
+        return jsonify(response)
+
+
+@app.route('/message')
 def message():
     n = 5
     rows = DB.get_all_messages()
     pages = math.ceil(len(rows) / n)
-
-    page = 1
-    if request.method == 'POST':
-        page = int(request.args.get['page'])
-        print(f"page在這裡!!!!!!!!!!!!{page}")
-    page = n * (page - 1)
-    rows = DB.get_message_by_page(page, n)
+    rows = DB.get_message_by_page(0, n)
     return render_template('message.html', rows=rows, pages=pages)
 
 

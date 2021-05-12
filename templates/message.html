@@ -120,16 +120,29 @@
         $('.page').click(function() {
             event.preventDefault()
             let page = $(this).text()
-            console.log(page)
+            var params = {
+                "page": page
+            }
             $.ajax({
-                url: "{{url_for('message')}}",
+                url: "{{url_for('ajax')}}",
                 type: 'POST',
-                data: page,
-                error: function(xhr) {
+                data: JSON.stringify(params),
+                dataType: 'json',
+                contentType: "application/json",
+                error: function(xhr, status, error) {
                     console.log("Failed");
+                    console.log(error);
                 },
                 success: function(response) {
-                    console.log("Success");
+                    console.log(response);
+                    $('#board > div:nth-child(4)').text('')
+                    for (var i = 0; i < response.length; i++) {
+                        $('#board > div:nth-child(4)').append("<div class='d-flex'><div class='floor wow-color'>" +
+                            response[i]['id'] + "樓</div><div class='mail ml-3 wow-color'>" +
+                            response[i]['email'] + "</div></div><div class='d-flex justify-content-center align-items-center'><div class='message mr-3 col-11'><div class='comment'>" +
+                            response[i]['comment'] + "</div></div><form action='{{url_for('delete_message')}}' method='POST'><button class='del-btn btn-link text-decoration-none w-100' name='button value='" +
+                            response[i]['id'] + "'>del</button></form></div><hr class='my-3 w-100' />")
+                    }
                 }
             })
         })
