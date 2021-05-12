@@ -5,8 +5,10 @@
     }
     
     #board {
+        margin-top: 3vh;
         background-color: #eee;
         border-radius: 5px;
+        height: 100%;
     }
     
     .title {
@@ -54,14 +56,17 @@
     .btn-link {
         background-color: #db4961;
         color: #ffffff;
-        text-decoration: none;
         transition: background-color .7s 0s ease, color .7s 0s ease;
     }
     
     .btn-link:hover {
         background-color: #ffb8c6;
         color: #db4961;
-        text-decoration: none;
+    }
+    @media (max-width: 767px) {
+        #board {
+            margin-top: 0;
+        }
     }
 </style>
 {% endblock %}{% block script %} {% block alert %}{% endblock %} {% endblock %}{% block content %}
@@ -75,11 +80,14 @@
             <p class="card-text">夜晚寧靜的淺草寺，一排排的燈籠閃著迷人的光暈，令人陶醉其中。</p>
         </div>
     </div>
-    <div id="board" class="container mt-5 my-2 d-flex flex-column">
-        <h3 class="my-3 ml-2 title">旅客評價</h3>
+    <div id="board" class="container d-flex flex-column">
+        <div class="d-flex justify-content-between">
+            <h3 class="my-3 ml-2 title">旅客評價</h3>
+            <span class="alert mt-3 mb-0 mr-5"></span>
+        </div>
         <div class="my-4 px-5 d-flex flex-column">
             <textarea class="col-12" type='text' rows="3" placeholder="留個言吧..." title="字數限制100" maxlength="150"></textarea>
-            <button class="send mt-4 w-50 btn btn-link align-self-center">送出</button>
+            <button class="send mt-4 w-50 btn btn-link text-decoration-none align-self-center">送出</button>
         </div>
         <hr class="my-3 w-100" />
         <div class="px-5">
@@ -92,7 +100,7 @@
                 <div class='msg message mr-3 col-11'>
                     <div class='msg'>{{ row['comment'] }}</div>
                 </div>
-                <button class='del-btn btn-link w-100' value='{{ row[ "id" ] }}'>del</button>
+                <button class='del-btn btn-link text-decoration-none w-100' value='{{ row[ "id" ] }}'>del</button>
             </div>
             <hr class='my-3 w-100' /> {% endfor %}
         </div>
@@ -120,14 +128,13 @@
                     console.log(error);
                 },
                 success: function(response) {
-                    console.log(response)
                     $('#board > div:nth-child(4)').text('')
                     $('.page').remove()
                     for (let i = 0; i < response['rows'].length; i++) {
                         $('#board > div:nth-child(4)').append("<div class='msg d-flex'><div class='msg wow-color'>" +
                             response['rows'][i]['id'] + "樓</div><div class='msg ml-3 wow-color'>" +
                             response['rows'][i]['email'] + "</div></div><div class='msg d-flex justify-content-center align-items-center'><div class='msg message mr-3 col-11'><div class='msg'>" +
-                            response['rows'][i]['comment'] + "</div></div><button class='del-btn btn-link w-100' value='" +
+                            response['rows'][i]['comment'] + "</div></div><button class='del-btn btn-link text-decoration-none w-100' value='" +
                             response['rows'][i]['id'] + "'>del</button></div><hr class='my-3 w-100' />")
                     }
                     for (let i = 0; i < response['pages']; i++) {
@@ -154,19 +161,21 @@
                         console.log(error);
                     },
                     success: function(response) {
-                        console.log(response)
                         if (response['success']) {
                             get_msg(1)
                         }
+                        $('.alert').text(response['msg'])
                     }
                 })
+            }
+            else {
+                $('.alert').text('您還沒留言哦~')
             }
         });
         // 刪除留言 
         $(document).on('click', '.del-btn', function() {
             let element = $(this)
             let id = element.val()
-            console.log(id)
             $.ajax({
                 url: "/ajax/del_msg/" + id,
                 type: 'DELETE',
@@ -174,11 +183,11 @@
                     console.log(error);
                 },
                 success: function(response) {
-                    console.log(response)
                     if (response['success']) {
                         element.parents('.msg').fadeOut()
                         get_msg(1)
                     }
+                    $('.alert').text(response['msg'])
                 }
             })
         });

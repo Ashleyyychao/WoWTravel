@@ -177,7 +177,7 @@ def add_message():
     if request.method == 'POST':
         response = {
             "success": False,
-            "msg": "錯誤"
+            "msg": ""
         }
         if 'LoggedIn' in session:
             comment = request.json['comment']
@@ -187,7 +187,6 @@ def add_message():
             message_id = DB.insert_message_table(email, comment, member_id)
             message = DB.get_message_by_id(message_id)
             response["success"] = True
-            response["msg"] = "留言成功"
         else:
             response["msg"] = "請先登入才能留言"
 
@@ -210,7 +209,7 @@ def del_msg(msg_id):
             if member_id == DB_member_id:
                 DB.delete_message_by_id(msg_id)
                 response["success"] = True
-                response["msg"] = "這則回應已被刪除"
+                response["msg"] = "您的留言已被刪除"
             else:
                 response["msg"] = "無法刪除他人留言"
                 return jsonify(response)
